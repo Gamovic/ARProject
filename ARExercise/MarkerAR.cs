@@ -208,18 +208,18 @@ namespace ARExercise
                 bool marker1Rot270Equal = pMatrix.Equals(Marker1Rot270);
 
 
-                //// Marker 2 normal
-                //Matrix<byte> marker2 = new Matrix<byte>(new byte[,]
-                //{
-                //    { 0,   0,   0,   0,   0, 0 },
-                //    { 0, 255, 255,   0,   0, 0 },
-                //    { 0, 255, 255,   0, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0,   0,   0,   0,   0, 0 }
-                //});
-                //// compare pixelValues with Marker2
-                //bool marker2Equal = pMatrix.Equals(marker2);
+                // Marker 2 normal
+                Matrix<byte> marker2 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker2
+                bool marker2Equal = pMatrix.Equals(marker2);
 
                 //// Marker 3 normal
                 //Matrix<byte> marker3 = new Matrix<byte>(new byte[,]
@@ -355,14 +355,14 @@ namespace ARExercise
                     Console.WriteLine("Marker1 and pMatrix are NOT equal");
                 }
 
-                //if (marker2Equal)
-                //{
-                //    Console.WriteLine("Marker2 and pMatrix are equal");
-                //}
-                //else
-                //{
-                //    Console.WriteLine("Marker2 and pMatrix are NOT equal");
-                //}
+                if (marker2Equal)
+                {
+                    Console.WriteLine("Marker2 and pMatrix are equal");
+                }
+                else
+                {
+                    Console.WriteLine("Marker2 and pMatrix are NOT equal");
+                }
                 //if (marker3Equal)
                 //{
                 //    Console.WriteLine("Marker3 and pMatrix are equal");
@@ -581,6 +581,7 @@ namespace ARExercise
 
                 // Calculate the center of each cell and get the pixel value of each cell (black or white)
                 byte[,] pixelValues2 = new byte[numRows, numCols];
+                byte[,] pixelValues3 = new byte[numRows, numCols];
                 for (int k = 0; k < numRows; k++)
                 {
                     for (int l = 0; l < numCols; l++)
@@ -590,7 +591,7 @@ namespace ARExercise
                         pixelValues2[k, l] = biTransImage2.GetRawData(new[] { x, y })[0];
                     }
                 }
-
+                
                 // new matrix that takes in the pixelValues
                 Matrix<byte> pMatrix2 = new Matrix<byte>(pixelValues2);
                 // Marker 1 normal
@@ -662,15 +663,15 @@ namespace ARExercise
                 string attackValue = "6";
                 MCvScalar greenColor = new MCvScalar(0, 255, 0);
 
-                if (marker2Equal)
-                {
-                    Console.WriteLine("Equal");
-                    UtilityAR.DrawCube(video, intrinsic * rtMatrix2);
-                }
-                else
-                {
-                    Console.WriteLine("NOT equal");
-                }
+                //if (marker2Equal)
+                //{
+                //    Console.WriteLine("Equal");
+                //    UtilityAR.DrawCube(video, intrinsic * rtMatrix2);
+                //}
+                //else
+                //{
+                //    Console.WriteLine("NOT equal");
+                //}
 
                 //if (marker2Rot90Equal)
                 //{
@@ -712,7 +713,7 @@ namespace ARExercise
 
 
 
-            CvInvoke.Imshow("Video", video);
+            //CvInvoke.Imshow("Video", video);
         }
     }
 }

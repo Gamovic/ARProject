@@ -9,7 +9,7 @@ namespace ARExercise
     public static class UtilityAR
     {
         // Dont change these values
-        private static int frameWidth = 800;
+        private static int frameWidth = 600;
         private static int frameHeight = 600;
         // load image
         //static Mat texture = CvInvoke.Imread("four.jpg");
