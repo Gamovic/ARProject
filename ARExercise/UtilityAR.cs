@@ -263,11 +263,7 @@ namespace ARExercise
 
         }
 
-
-
-
-
-        public static void DrawNewCube(IInputOutputArray img, Matrix<float> projection, float scale = 1)
+        public static void DrawTextCube(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, float scale = 100)
         {
             Matrix<float>[] worldPoints = new[]
             {
@@ -289,95 +285,6 @@ namespace ARExercise
                 Tuple.Create(2, 6), Tuple.Create(3, 7)
             };
 
-            // Draw filled floor
-            //VectorOfVectorOfPoint floorContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
-            //Image<Bgr, byte> floorImg = new Image<Bgr, byte>("four.jpg");
-            //Rectangle floorRect = CvInvoke.BoundingRectangle(floorContour);
-            //floorImg = floorImg.Resize(floorRect.Width, floorRect.Height, Inter.Linear);
-            //Mat imgROI = new Mat(img, floorRect);
-            //floorImg.CopyTo(img);
-            //img.ROI = Rectangle.Empty;
-
-            VectorOfVectorOfPoint floorContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
-            CvInvoke.DrawContours(img, floorContour, -1, new MCvScalar(255, 255, 255), -3);
-            //CvInvoke.DrawContours(img, floorContour, -1, new Bgr(0, 255, 0).MCvScalar, -1);
-
-            // Calculate angle of bottom edge
-            //double angle = Math.Atan2(screenPoints[3].Y - screenPoints[0].Y, screenPoints[3].X - screenPoints[0].X) * 180 / Math.PI;
-            //int i;
-            //// Add text on top of floorContour with same angle
-            //Size textSize = CvInvoke.GetTextSize("1", FontFace.HersheySimplex, 2, 3, ref);
-            //Point textLocation = new Point((int)((screenPoints[0].X + screenPoints[2].X - textSize.Width) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y + baseline) / 2));
-            //Mat rotMat = CvInvoke.GetRotationMatrix2D(textLocation, angle, 1);
-            //CvInvoke.PutText(img, "1", textLocation, FontFace.HersheySimplex, 2, new MCvScalar(255, 0, 0), 3);
-            //CvInvoke.WarpAffine(img, img, rotMat, img.Size);
-
-            //// Add text on top of floorContour
-            //CvInvoke.PutText(img, "4", new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(255, 0, 0), 3);
-
-
-            // Draw top
-            //foreach (Tuple<int, int> li in lineIndexes.Skip(4).Take(4))
-            //{
-            //    Point p1 = screenPoints[li.Item1];
-            //    Point p2 = screenPoints[li.Item2];
-
-            //    CvInvoke.Line(img, p1, p2, new MCvScalar(255, 0, 0), 3);
-            //}
-
-            // Draw pillars
-            foreach (Tuple<int, int> li in lineIndexes.Skip(8).Take(4))
-            {
-                Point p1 = screenPoints[li.Item1];
-                Point p2 = screenPoints[li.Item2];
-
-                CvInvoke.Line(img, p1, p2, new MCvScalar(0, 0, 255), 3);
-            }
-        }
-
-
-
-
-
-
-
-        public static void DrawRedCube(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, float scale = 1)
-        {
-            Matrix<float>[] worldPoints = new[]
-            {
-                new Matrix<float>(new float[] { 0, 0, 0, 1 }), new Matrix<float>(new float[] { scale, 0, 0, 1 }),
-                new Matrix<float>(new float[] { scale, scale, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 }),
-                new Matrix<float>(new float[] { 0, 0, -scale, 1 }), new Matrix<float>(new float[] { scale, 0, -scale, 1 }),
-                new Matrix<float>(new float[] { scale, scale, -scale, 1 }), new Matrix<float>(new float[] { 0, scale, -scale, 1 })
-            };
-
-            Point[] screenPoints = worldPoints
-                .Select(x => WorldToScreen(x, projection)).ToArray();
-
-            Tuple<int, int>[] lineIndexes = new[] {
-                Tuple.Create(0, 1), Tuple.Create(1, 2), // Floor
-                Tuple.Create(2, 3), Tuple.Create(3, 0),
-                Tuple.Create(4, 5), Tuple.Create(5, 6), // Top
-                Tuple.Create(6, 7), Tuple.Create(7, 4),
-                Tuple.Create(0, 4), Tuple.Create(1, 5), // Pillars
-                Tuple.Create(2, 6), Tuple.Create(3, 7)
-            };
-
-            //var imageFilePath = ("four2.jpg");
-
-            //Mat image = CvInvoke.Imread(imageFilePath, ImreadModes.Color);
-
-            //Mat imageMat = CvInvoke.Imread("four.jpg");
-            //IInputOutputArray imageArray = (IInputOutputArray)imageMat.GetInputOutputArray();
-
-            //Size inputSize = new Size(image.Width, image.Height);
-            //CvInvoke.Resize(image, image, inputSize);
-
-            //double alpha = 0.5f;
-            //CvInvoke.AddWeighted(img, alpha, img, 1 - alpha, 0, img);
-
-            //Rectangle floorRect = new Rectangle((int)screenPoints[0].X, (int)screenPoints[0].Y, (int)(screenPoints[2].X - screenPoints[0].X), (int)(screenPoints[2].Y - screenPoints[0].Y));
-            //CvInvoke.Rectangle(texture, floorRect, new MCvScalar(0, 255, 0), -1);
             // Draw filled floor
             VectorOfVectorOfPoint floorContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
             CvInvoke.DrawContours(img, floorContour, -1, color, -3);
@@ -405,63 +312,6 @@ namespace ARExercise
             // Add text on top of floorContour
             CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
         }
-
-        //public static void DrawTextureCube(IInputOutputArray img, Matrix<float> projection, float scale = 1)
-        //{
-            //Matrix<float>[] worldPoints = new[]
-            //{
-            //    new Matrix<float>(new float[] { 0, 0, 0, 1 }), new Matrix<float>(new float[] { scale, 0, 0, 1 }),
-            //    new Matrix<float>(new float[] { scale, scale, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 }),
-            //    new Matrix<float>(new float[] { 0, 0, -scale, 1 }), new Matrix<float>(new float[] { scale, 0, -scale, 1 }),
-            //    new Matrix<float>(new float[] { scale, scale, -scale, 1 }), new Matrix<float>(new float[] { 0, scale, -scale, 1 })
-            //};
-
-            //Point[] screenPoints = worldPoints
-            //    .Select(x => WorldToScreen(x, projection)).ToArray();
-
-            //Tuple<int, int>[] lineIndexes = new[] {
-            //    Tuple.Create(0, 1), Tuple.Create(1, 2), // Floor
-            //    Tuple.Create(2, 3), Tuple.Create(3, 0),
-            //    Tuple.Create(4, 5), Tuple.Create(5, 6), // Top
-            //    Tuple.Create(6, 7), Tuple.Create(7, 4),
-            //    Tuple.Create(0, 4), Tuple.Create(1, 5), // Pillars
-            //    Tuple.Create(2, 6), Tuple.Create(3, 7)
-            //};
-
-            //// Draw filled floor
-            //VectorOfVectorOfPoint floorContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
-            //CvInvoke.DrawContours(img, floorContour, -1, new MCvScalar(0, 255, 0), -3);
-
-            //// Draw top and sides with textures
-            //Size imageSize = img.GetInputArray().GetSize();
-            //Size faceSize = new Size((int)Math.Round(Math.Sqrt(imageSize.Width * imageSize.Height / 6.0)), (int)Math.Round(Math.Sqrt(imageSize.Width * imageSize.Height / 6.0)));
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    if (i == 1 || i == 4)
-            //    {
-            //        // Skip sides
-            //        continue;
-            //    }
-
-            //    PointF[] points = new PointF[]
-            //    {
-            //        screenPoints[lineIndexes[i * 2].Item1], screenPoints[lineIndexes[i * 2].Item2],
-            //        screenPoints[lineIndexes[i * 2 + 1].Item2], screenPoints[lineIndexes[i * 2 + 1].Item1]
-            //    };
-            //    Mat face = new Mat(faceSize, texture.Depth, texture.NumberOfChannels);
-            //    CvInvoke.Resize(texture, face, faceSize, 0, 0, Inter.Linear);
-
-            //    Point[] texCoords = new Point[] { new Point(0, 0), new Point(faceSize.Width, 0), new Point(faceSize.Width, faceSize.Height), new Point(0, faceSize.Height) };
-            //    VectorOfPoint texCoordsVector = new VectorOfPoint(texCoords);
-            //    CvInvoke.FillConvexPoly(face, texCoordsVector, new MCvScalar(255, 255, 255));
-            //    CvInvoke.FillConvexPoly(face, texCoordsVector, new MCvScalar(255, 255, 255));
-            //    PointF[] srcPts = new PointF[] { new PointF(0, 0), new PointF(faceSize.Width, 0), new PointF(faceSize.Width, faceSize.Height), new PointF(0, faceSize.Height) };
-            //    Mat homography = CvInvoke.FindHomography(points, srcPts, RobustEstimationAlgorithm.Ransac);
-            //    CvInvoke.WarpPerspective(face, img, homography, imageSize, Inter.Linear, Warp.Default, BorderType.Constant, new MCvScalar());
-            //    Rectangle textureRect = new Rectangle((int)points[0].X, (int)points[0].Y, (int)(points[2].X - points[0].X), (int)(points[2].Y - points[0].Y));
-            //    CvInvoke.Rectangle(img, textureRect, new MCvScalar(0, 0, 0), 3);
-            //}
-        //}
 
         /// <summary>
         /// Converts a homogeneous world coordinate to a screen point
