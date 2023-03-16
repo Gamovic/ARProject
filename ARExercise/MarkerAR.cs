@@ -15,6 +15,13 @@ namespace ARExercise
     {
         VideoCapture vCap;
 
+        Mat image;
+        Mat video;
+        Mat grayImage;
+        Mat binaryImage;
+        Mat hierarchy;
+        Mat contourImage;
+
         Matrix<float> intrinsic;
         Matrix<float> distortionCoeff;
 
@@ -22,11 +29,22 @@ namespace ARExercise
         Matrix<float> translationVector = new Matrix<float>(3, 1);
         Matrix<float> newRotMatrix = new Matrix<float>(3, 3);
 
+        Matrix<byte> pixelMatrix;
+
         Matrix<float> rtMatrix;
+
+        VectorOfVectorOfPoint contours;
+
+        VectorOfVectorOfPoint squareContours;
 
         bool marker1Equal, marker1Rot90Equal, marker1Rot180Equal, marker1Rot270Equal;
         bool marker2Equal, marker2Rot90Equal, marker2Rot180Equal, marker2Rot270Equal;
         bool marker3Equal, marker3Rot90Equal, marker3Rot180Equal, marker3Rot270Equal;
+        bool marker4Equal, marker4Rot90Equal, marker4Rot180Equal, marker4Rot270Equal;
+        bool marker5Equal, marker5Rot90Equal, marker5Rot180Equal, marker5Rot270Equal;
+        bool marker6Equal, marker6Rot90Equal, marker6Rot180Equal, marker6Rot270Equal;
+        bool marker7Equal, marker7Rot90Equal, marker7Rot180Equal, marker7Rot270Equal;
+        bool marker8Equal, marker8Rot90Equal, marker8Rot180Equal, marker8Rot270Equal;
 
         public MarkerAR()
         {
@@ -37,46 +55,34 @@ namespace ARExercise
             //Read intrinsic and distortionCoeff from CameraCalibration (.json file)
             UtilityAR.ReadIntrinsicsFromFile(out intrinsic, out distortionCoeff);
 
-            // Keep on capturing images
-            //UtilityAR.CaptureLoop(new Size(7, 4), 1);
-            //UtilityAR.CalibrateCamera(new Size(7, 4), true);
-
             // load image
-            Mat image = CvInvoke.Imread("capture_1.jpg");
-
+            image = CvInvoke.Imread("capture_1.jpg");
             // new gray image mat
-            Mat grayImage = new Mat();
+            grayImage = new Mat();
+            // new binary image mat
+            binaryImage = new Mat();
+
+            hierarchy = new Mat();
+
+            contours = new VectorOfVectorOfPoint();
+            
 
             // from color to gray
             CvInvoke.CvtColor(image, grayImage, ColorConversion.Bgr2Gray);
 
-            // show gray image
-            //CvInvoke.Imshow("hello2", grayImage);
-
-            // new binary image mat
-            Mat biImage = new Mat();
-
             // from gray to binary
-            CvInvoke.Threshold(grayImage, biImage, 128, 255, ThresholdType.Otsu);
-
-            // show binary image
-            //CvInvoke.Imshow("hello3", biImage);
+            CvInvoke.Threshold(grayImage, binaryImage, 128, 255, ThresholdType.Otsu);
 
             // Find contours
-            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-            Mat hierarchy = new Mat();
-
-            CvInvoke.FindContours(biImage, contours, hierarchy, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(binaryImage, contours, hierarchy, RetrType.List, ChainApproxMethod.ChainApproxSimple);
 
             // Draw contours
-            Mat contourImage = new Mat(biImage.Size, DepthType.Cv8U, 3);
-
+            contourImage = new Mat(binaryImage.Size, DepthType.Cv8U, 3);
             CvInvoke.DrawContours(contourImage, contours, -1, new MCvScalar(255, 0, 0));
             //CvInvoke.Imshow("Contours", contourImage);
 
-
             // contours to save
-            VectorOfVectorOfPoint squareContours = new VectorOfVectorOfPoint();
+            squareContours = new VectorOfVectorOfPoint();
 
             // loop through the found contours and filter them
             for (int i = 0; i < contours.Size; i++)
@@ -97,19 +103,11 @@ namespace ARExercise
                 {
                     squareContours.Push(approxCurve);
                 }
-
-
             }
 
             // Draw and show new squareContours drawn on image
             CvInvoke.DrawContours(image, squareContours, -1, new MCvScalar(255, 0, 0));
             CvInvoke.Imshow("Contours2", image);
-
-
-            Matrix<float> rotationVector = new Matrix<float>(3, 1);
-            Matrix<float> translationVector = new Matrix<float>(3, 1);
-            Matrix<float> newRotMatrix = new Matrix<float>(3, 3);
-
 
             // Undistort and transform each figur in the bigger image, into seperat small images
             for (int i = 0; i < squareContours.Size; i++)
@@ -157,10 +155,9 @@ namespace ARExercise
                         pixelValues[k, l] = biTransImage.GetRawData(new[] { x, y })[0];
                     }
                 }
-                
 
                 // new matrix that takes in the pixelValues
-                Matrix<byte> pixelMatrix = new Matrix<byte>(pixelValues);
+                pixelMatrix = new Matrix<byte>(pixelValues);
 
                 ///
                 /// Marker 1 - Works with: "capture_1.jpg"
@@ -204,7 +201,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-                // compare pixelValues with Marker1
+                // compare pixelValues with Marker 1
                 marker1Equal = pixelMatrix.Equals(marker1);
                 marker1Rot90Equal = pixelMatrix.Equals(marker1Rot90);
                 marker1Rot180Equal = pixelMatrix.Equals(marker1Rot180);
@@ -262,7 +259,7 @@ namespace ARExercise
                 //Matrix<byte> Marker2Rot270 = new Matrix<byte>(new byte[100 / 6]);
                 //CvInvoke.Rotate(Marker2, Marker2Rot270, RotateFlags.Rotate90CounterClockwise);
 
-                // compare pixelValues with Marker2
+                // compare pixelValues with Marker 2
                 marker2Equal = pixelMatrix.Equals(marker2);
                 // compare pixelValues with Marker2Rot90
                 marker2Rot90Equal = pixelMatrix.Equals(marker2Rot90);
@@ -283,7 +280,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-                // Marker 3 rotated 90 degrees clockwise - Works with: "capture_16.jpg"
+                // Marker 3 rotated 90 degrees clockwise - Works with: "capture_2.jpg"
                 Matrix<byte> Marker3Rot90 = new Matrix<byte>(new byte[,]
                 {
                     { 0,   0,   0,   0,   0, 0 },
@@ -314,7 +311,7 @@ namespace ARExercise
                     { 0,   0,   0,   0,   0, 0 }
                 });
 
-                // compare pixelValues with Marker3
+                // compare pixelValues with Marker 3
                 marker3Equal = pixelMatrix.Equals(Marker3);
                 // compare pixelValues with Marker3Rot90
                 marker3Rot90Equal = pixelMatrix.Equals(Marker3Rot90);
@@ -323,71 +320,256 @@ namespace ARExercise
                 // compare pixelValues with Marker3Rot270
                 marker3Rot270Equal = pixelMatrix.Equals(Marker3Rot270);
 
-                //// Marker 4 normal
-                //Matrix<byte> marker4 = new Matrix<byte>(new byte[,]
-                //{
-                //    { 0,   0,   0,   0,   0, 0 },
-                //    { 0, 255, 255, 255,   0, 0 },
-                //    { 0, 255, 255,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0,   0,   0,   0,   0, 0 }
-                //});
-                //// compare pixelValues with Marker4
-                //bool marker4Equal = pMatrix.Equals(marker4);
+                ///
+                /// Marker 4 normal - Works with: video
+                ///
+                Matrix<byte> Marker4 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 4 rotated 90 degrees clockwise - Works with: video
+                Matrix<byte> Marker4Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 4 rotated 180 degrees - Works with: video
+                Matrix<byte> Marker4Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 4 rotated 270 degress clockwise - Works with: video
+                Matrix<byte> Marker4Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
 
-                //// Marker 5 normal
-                //Matrix<byte> marker5 = new Matrix<byte>(new byte[,]
-                //{
-                //    { 0,   0,   0,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0,   0,   0,   0,   0, 0 }
-                //});
-                //// compare pixelValues with Marker5
-                //bool marker5Equal = pMatrix.Equals(marker5);
+                // compare pixelValues with Marker 4
+                marker4Equal = pixelMatrix.Equals(Marker4);
+                // compare pixelValues with Marker3Rot90
+                marker4Rot90Equal = pixelMatrix.Equals(Marker4Rot90);
+                // compare pixelValues with Marker3Rot180
+                marker4Rot180Equal = pixelMatrix.Equals(Marker4Rot180);
+                // compare pixelValues with Marker3Rot270
+                marker4Rot270Equal = pixelMatrix.Equals(Marker4Rot270);
 
-                //// Marker 6 normal
-                //Matrix<byte> marker6 = new Matrix<byte>(new byte[,]
-                //{
-                //    { 0,   0,   0,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0,   0,   0,   0,   0, 0 }
-                //});
-                //// compare pixelValues with Marker6
-                //bool marker6Equal = pMatrix.Equals(marker6);
+                ///
+                /// Marker 5 - Works with: video
+                ///
+                Matrix<byte> marker5 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
 
-                //// Marker 7 normal
-                //Matrix<byte> marker7 = new Matrix<byte>(new byte[,]
-                //{
-                //    { 0,   0,   0,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255,   0,   0, 0 },
-                //    { 0, 255, 255, 255,   0, 0 },
-                //    { 0,   0,   0,   0,   0, 0 }
-                //});
-                //// compare pixelValues with Marker7
-                //bool marker7Equal = pMatrix.Equals(marker7);
+                // Marker 5 rotated 90 degrees clockwise - Works with: video
+                Matrix<byte> marker5Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
 
-                //// Marker 8 normal
-                //Matrix<byte> marker8 = new Matrix<byte>(new byte[,]
-                //{
-                //    { 0,   0,   0,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255,   0,   0, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0, 255, 255, 255, 255, 0 },
-                //    { 0,   0,   0,   0,   0, 0 }
-                //});
-                //// compare pixelValues with Marker8
-                //bool marker8Equal = pMatrix.Equals(marker8);
+                // Marker 5 rotated 180 degrees - Works with: video
+                Matrix<byte> marker5Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
 
+                // Marker 5 rotated 270 degress clockwise - Works with: "capture_6.jpg"
+                Matrix<byte> marker5Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+
+                // compare pixelValues with Marker 5
+                marker5Equal = pixelMatrix.Equals(marker5);
+                // compare pixelValues with Marker2Rot90
+                marker5Rot90Equal = pixelMatrix.Equals(marker5Rot90);
+                // compare pixelValues with Marker2Rot180
+                marker5Rot180Equal = pixelMatrix.Equals(marker5Rot180);
+                // compare pixelValues with Marker2Rot270
+                marker5Rot270Equal = pixelMatrix.Equals(marker5Rot270);
+
+                ///
+                /// Marker 6 - Works with: video
+                ///
+                Matrix<byte> marker6 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 6 rotated 90 degrees clockwise - Works with: video
+                Matrix<byte> marker6Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 6 rotated 180 degrees - Works with: video
+                Matrix<byte> marker6Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 6 rotated 270 degress clockwise - Works with: video
+                Matrix<byte> marker6Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 6
+                marker6Equal = pixelMatrix.Equals(marker6);
+                marker6Rot90Equal = pixelMatrix.Equals(marker6Rot90);
+                marker6Rot180Equal = pixelMatrix.Equals(marker6Rot180);
+                marker6Rot270Equal = pixelMatrix.Equals(marker6Rot270);
+
+                ///
+                /// Marker 7 - Works with: "capture_1.jpg"
+                ///
+                Matrix<byte> marker7 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 7 rotated 90 degrees clockwise - Works with: "capture_16.jpg"
+                Matrix<byte> marker7Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 7 rotated 180 degrees - Works with: "capture_11.jpg"
+                Matrix<byte> marker7Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 7 rotated 270 degress clockwise - Works with: "capture_6.jpg"
+                Matrix<byte> marker7Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 7
+                marker7Equal = pixelMatrix.Equals(marker7);
+                marker7Rot90Equal = pixelMatrix.Equals(marker7Rot90);
+                marker7Rot180Equal = pixelMatrix.Equals(marker7Rot180);
+                marker7Rot270Equal = pixelMatrix.Equals(marker7Rot270);
+
+                ///
+                /// Marker 8 - Works with: "capture_1.jpg"
+                ///
+                Matrix<byte> marker8 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 8 rotated 90 degrees clockwise - Works with: "capture_16.jpg"
+                Matrix<byte> marker8Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 8 rotated 180 degrees - Works with: "capture_11.jpg"
+                Matrix<byte> marker8Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 8 rotated 270 degress clockwise - Works with: "capture_6.jpg"
+                Matrix<byte> marker8Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 8
+                marker8Equal = pixelMatrix.Equals(marker8);
+                marker8Rot90Equal = pixelMatrix.Equals(marker8Rot90);
+                marker8Rot180Equal = pixelMatrix.Equals(marker8Rot180);
+                marker8Rot270Equal = pixelMatrix.Equals(marker8Rot270);
 
                 // Convert VectorOfPointF points to MCvPoint3D32f
                 MCvPoint3D32f[] mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
@@ -402,14 +584,10 @@ namespace ARExercise
                 PointF[] imagePoints = points.Select(p => new PointF(p.X, p.Y)).ToArray();
 
                 // Estimate the pose using SolvePnP
-                
-
                 CvInvoke.SolvePnP(mcPoints, imagePoints, intrinsic, distortionCoeff, rotationVector, translationVector);
 
-                
 
                 CvInvoke.Rodrigues(rotationVector, newRotMatrix);
-
 
                 // New matrix from our new rotaion matrix's data and translation data
                 float[,] rValues = newRotMatrix.Data;
@@ -498,43 +676,78 @@ namespace ARExercise
                     UtilityAR.DrawCube(image, intrinsic * rtMatrix);
                 }
 
+                ///
+                /// Check marker 4 and draw cube if pixelMatrix equals marker 4
+                ///
+                if (marker4Equal)
+                {
+                    Console.WriteLine("Marker4 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker4Rot90Equal)
+                {
+                    Console.WriteLine("Marker4Rot90 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker4Rot180Equal)
+                {
+                    Console.WriteLine("Marker4Rot180 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker4Rot270Equal)
+                {
+                    Console.WriteLine("Marker4Rot270 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
 
+                ///
+                /// Check marker 7 and draw cube if pixelMatrix equals marker 7
+                ///
+                if (marker7Equal)
+                {
+                    Console.WriteLine("Marker7 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker7Rot90Equal)
+                {
+                    Console.WriteLine("Marker7Rot90 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker7Rot180Equal)
+                {
+                    Console.WriteLine("Marker7Rot180 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker7Rot270Equal)
+                {
+                    Console.WriteLine("Marker7Rot270 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
 
-                //if (marker4Equal)
-                //{
-                //    Console.WriteLine("Marker4 and pMatrix are equal");
-                //}
-                //if (marker5Equal)
-                //{
-                //    Console.WriteLine("Marker5 and pMatrix are equal");
-                //}
-                //if (marker6Equal)
-                //{
-                //    Console.WriteLine("Marker6 and pMatrix are equal");
-                //}
-                //if (marker7Equal)
-                //{
-                //    Console.WriteLine("Marker7 and pMatrix are equal");
-                //}
-                //if (marker8Equal)
-                //{
-                //    Console.WriteLine("Marker8 and pMatrix are equal");
-                //}
-
-
-
-                //UtilityAR.DrawRedCube(image3, intrinsic * rtMatrix, attackValue, redColor);
-
-                //UtilityAR.DrawCube(image, intrinsic * rtMatrix);
-
-                //CvInvoke.Imshow("draw cube", image);
-
-
+                ///
+                /// Check marker 8 and draw cube if pixelMatrix equals marker 8
+                ///
+                if (marker8Equal)
+                {
+                    Console.WriteLine("Marker8 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker8Rot90Equal)
+                {
+                    Console.WriteLine("Marker8Rot90 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker8Rot180Equal)
+                {
+                    Console.WriteLine("Marker8Rot180 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
+                if (marker8Rot270Equal)
+                {
+                    Console.WriteLine("Marker8Rot270 and pMatrix are equal");
+                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                }
             }
-
-
-            //UtilityAR.DrawCube(image, intrinsic * rtMatrix);
-
             CvInvoke.Imshow("draw cube", image);
         }
 
@@ -542,27 +755,18 @@ namespace ARExercise
 
         public override void OnFrame()
         {
-            Mat video = new Mat();
+            video = new Mat();
 
             vCap.Read(video);
 
-            Mat grayImage = new Mat();
             CvInvoke.CvtColor(video, grayImage, ColorConversion.Bgr2Gray);
 
-            Mat biImage = new Mat();
-            CvInvoke.Threshold(grayImage, biImage, 128, 255, ThresholdType.Otsu);
+            CvInvoke.Threshold(grayImage, binaryImage, 128, 255, ThresholdType.Otsu);
 
-            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
-            Mat hierarchy = new Mat();
-
-            CvInvoke.FindContours(biImage, contours, hierarchy, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(binaryImage, contours, hierarchy, RetrType.List, ChainApproxMethod.ChainApproxSimple);
 
             // Draw contours
-            Mat contourImage = new Mat(biImage.Size, DepthType.Cv8U, 3);
-
             CvInvoke.DrawContours(contourImage, contours, -1, new MCvScalar(255, 0, 0));
-
-            VectorOfVectorOfPoint squareContours = new VectorOfVectorOfPoint();
 
             // loop through the found contours and filter them
             for (int i = 0; i < contours.Size; i++)
@@ -583,13 +787,7 @@ namespace ARExercise
                 {
                     squareContours.Push(approxCurve);
                 }
-
-
             }
-
-            // Draw and show new squareContours drawn on image
-            CvInvoke.DrawContours(video, squareContours, -1, new MCvScalar(255, 0, 0));
-            //CvInvoke.Imshow("video contours", video);
 
             for (int i = 0; i < squareContours.Size; i++)
             {
@@ -614,11 +812,9 @@ namespace ARExercise
                 // make it gray
                 CvInvoke.CvtColor(transformedImage, grayTransImage, ColorConversion.Bgr2Gray);
 
-                Mat biTransImage = new Mat();
+                Mat binaryTransformedImage = new Mat();
                 // make binary
-                CvInvoke.Threshold(grayTransImage, biTransImage, 128, 255, ThresholdType.Otsu);
-                //CvInvoke.Imshow("Binary Transformed Image" + i, biTransImage2);
-
+                CvInvoke.Threshold(grayTransImage, binaryTransformedImage, 128, 255, ThresholdType.Otsu);
 
                 int numRows = 6;
                 int numCols = 6;
@@ -632,12 +828,12 @@ namespace ARExercise
                     {
                         int x = (l * cellSize) + (cellSize / 2);
                         int y = (k * cellSize) + (cellSize / 2);
-                        pixelValues[k, l] = biTransImage.GetRawData(new[] { x, y })[0];
+                        pixelValues[k, l] = binaryTransformedImage.GetRawData(new[] { x, y })[0];
                     }
                 }
 
                 // new matrix that takes in the pixelValues
-                Matrix<byte> pMatrix = new Matrix<byte>(pixelValues);
+                Matrix<byte> pixelMatrix = new Matrix<byte>(pixelValues);
 
                 ///
                 /// Marker 1
@@ -682,10 +878,10 @@ namespace ARExercise
                     { 0,   0,   0,   0,   0, 0 }
                 });
                 // compare pixelValues with Marker2
-                marker1Equal = pMatrix.Equals(marker1);
-                marker1Rot90Equal = pMatrix.Equals(marker1Rot90);
-                marker1Rot180Equal = pMatrix.Equals(marker1Rot180);
-                marker1Rot270Equal = pMatrix.Equals(marker1Rot270);
+                marker1Equal = pixelMatrix.Equals(marker1);
+                marker1Rot90Equal = pixelMatrix.Equals(marker1Rot90);
+                marker1Rot180Equal = pixelMatrix.Equals(marker1Rot180);
+                marker1Rot270Equal = pixelMatrix.Equals(marker1Rot270);
 
                 ///
                 /// Marker 2
@@ -699,8 +895,6 @@ namespace ARExercise
                     { 0,   0, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-
-
                 // Marker 2 rotated 90 degrees clockwise
                 Matrix<byte> marker2Rot90 = new Matrix<byte>(new byte[,]
                 {
@@ -711,7 +905,6 @@ namespace ARExercise
                     { 0, 255, 255,   0,   0, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-
                 // Marker 2 rotated 180 degrees
                 Matrix<byte> marker2Rot180 = new Matrix<byte>(new byte[,]
                 {
@@ -722,7 +915,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-
                 // Marker 2 rotated 270 degress clockwise
                 Matrix<byte> marker2Rot270 = new Matrix<byte>(new byte[,]
                 {
@@ -733,15 +925,14 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-
                 // compare pixelValues with Marker1
-                marker2Equal = pMatrix.Equals(marker2);
+                marker2Equal = pixelMatrix.Equals(marker2);
                 // compare pixelValues with Marker1Rot90
-                marker2Rot90Equal = pMatrix.Equals(marker2Rot90);
+                marker2Rot90Equal = pixelMatrix.Equals(marker2Rot90);
                 // compare pixelValues with Marker1Rot180
-                marker2Rot180Equal = pMatrix.Equals(marker2Rot180);
+                marker2Rot180Equal = pixelMatrix.Equals(marker2Rot180);
                 // compare pixelValues with Marker1Rot270
-                marker2Rot270Equal = pMatrix.Equals(marker2Rot270);
+                marker2Rot270Equal = pixelMatrix.Equals(marker2Rot270);
                 
                 ///
                 /// Marker 3 normal
@@ -785,16 +976,260 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
                 });
-
                 // compare pixelValues with Marker3
-                marker3Equal = pMatrix.Equals(Marker3);
+                marker3Equal = pixelMatrix.Equals(Marker3);
                 // compare pixelValues with Marker3Rot90
-                marker3Rot90Equal = pMatrix.Equals(Marker3Rot90);
+                marker3Rot90Equal = pixelMatrix.Equals(Marker3Rot90);
                 // compare pixelValues with Marker3Rot180
-                marker3Rot180Equal = pMatrix.Equals(Marker3Rot180);
+                marker3Rot180Equal = pixelMatrix.Equals(Marker3Rot180);
                 // compare pixelValues with Marker3Rot270
-                marker3Rot270Equal = pMatrix.Equals(Marker3Rot270);
+                marker3Rot270Equal = pixelMatrix.Equals(Marker3Rot270);
 
+                ///
+                /// Marker 4
+                ///
+                Matrix<byte> Marker4 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 4 rotated 90 degrees clockwise
+                Matrix<byte> Marker4Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 4 rotated 180 degrees
+                Matrix<byte> Marker4Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 4 rotated 270 degress clockwise
+                Matrix<byte> Marker4Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker3
+                marker4Equal = pixelMatrix.Equals(Marker4);
+                // compare pixelValues with Marker3Rot90
+                marker4Rot90Equal = pixelMatrix.Equals(Marker4Rot90);
+                // compare pixelValues with Marker3Rot180
+                marker4Rot180Equal = pixelMatrix.Equals(Marker4Rot180);
+                // compare pixelValues with Marker3Rot270
+                marker4Rot270Equal = pixelMatrix.Equals(Marker4Rot270);
+
+                ///
+                /// Marker 5
+                ///
+                Matrix<byte> marker5 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 5 rotated 90 degrees clockwise
+                Matrix<byte> marker5Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 5 rotated 180 degrees
+                Matrix<byte> marker5Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 5 rotated 270 degress clockwise
+                Matrix<byte> marker5Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 5
+                marker5Equal = pixelMatrix.Equals(marker5);
+                // compare pixelValues with Marker2Rot90
+                marker5Rot90Equal = pixelMatrix.Equals(marker5Rot90);
+                // compare pixelValues with Marker2Rot180
+                marker5Rot180Equal = pixelMatrix.Equals(marker5Rot180);
+                // compare pixelValues with Marker2Rot270
+                marker5Rot270Equal = pixelMatrix.Equals(marker5Rot270);
+
+                ///
+                /// Marker 6
+                ///
+                Matrix<byte> marker6 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 6 rotated 90 degrees clockwise
+                Matrix<byte> marker6Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 6 rotated 180 degrees
+                Matrix<byte> marker6Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 6 rotated 270 degress clockwise
+                Matrix<byte> marker6Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 6
+                marker6Equal = pixelMatrix.Equals(marker6);
+                marker6Rot90Equal = pixelMatrix.Equals(marker6Rot90);
+                marker6Rot180Equal = pixelMatrix.Equals(marker6Rot180);
+                marker6Rot270Equal = pixelMatrix.Equals(marker6Rot270);
+
+                ///
+                /// Marker 7
+                ///
+                Matrix<byte> marker7 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 7 rotated 90 degrees clockwise
+                Matrix<byte> marker7Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 7 rotated 180 degrees
+                Matrix<byte> marker7Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 7 rotated 270 degress clockwise
+                Matrix<byte> marker7Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 7
+                marker7Equal = pixelMatrix.Equals(marker7);
+                marker7Rot90Equal = pixelMatrix.Equals(marker7Rot90);
+                marker7Rot180Equal = pixelMatrix.Equals(marker7Rot180);
+                marker7Rot270Equal = pixelMatrix.Equals(marker7Rot270);
+
+                ///
+                /// Marker 8
+                ///
+                Matrix<byte> marker8 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 8 rotated 90 degrees clockwise
+                Matrix<byte> marker8Rot90 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255,   0, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 8 rotated 180 degrees
+                Matrix<byte> marker8Rot180 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255,   0, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // Marker 8 rotated 270 degress clockwise
+                Matrix<byte> marker8Rot270 = new Matrix<byte>(new byte[,]
+                {
+                    { 0,   0,   0,   0,   0, 0 },
+                    { 0, 255, 255,   0, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0, 255, 255, 255, 255, 0 },
+                    { 0,   0,   0,   0,   0, 0 }
+                });
+                // compare pixelValues with Marker 8
+                marker8Equal = pixelMatrix.Equals(marker8);
+                marker8Rot90Equal = pixelMatrix.Equals(marker8Rot90);
+                marker8Rot180Equal = pixelMatrix.Equals(marker8Rot180);
+                marker8Rot270Equal = pixelMatrix.Equals(marker8Rot270);
 
                 // Convert VectorOfPointF points to MCvPoint3D32f
                 MCvPoint3D32f[] mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
@@ -825,35 +1260,40 @@ namespace ARExercise
                         { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
                 });
 
-                string cube1 = "1";
-                string cube2 = "2";
-                string cube3 = "3";
+                string attackValue1 = "2";
+                string attackValue2 = "3";
+                string attackValue3 = "5";
+                string attackValue4 = "8";
+
                 MCvScalar greenColor = new MCvScalar(0, 255, 0);
                 MCvScalar blueColor = new MCvScalar(255, 0, 0);
                 MCvScalar yellowColor = new MCvScalar(0, 255, 255);
                 MCvScalar redColor = new MCvScalar(0, 0, 255);
 
                 if (marker1Equal || marker1Rot90Equal || marker1Rot180Equal || marker1Rot270Equal)
-                {
-                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, cube1, greenColor);
-                }
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue1, greenColor);
 
                 if (marker2Equal || marker2Rot90Equal || marker2Rot180Equal || marker2Rot270Equal)
-                {
-                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, cube2, blueColor);
-                }
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue2, blueColor);
 
                 if (marker3Equal || marker3Rot90Equal || marker3Rot180Equal || marker3Rot270Equal)
-                {
-                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, cube3, yellowColor);
-                }
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue3, yellowColor);
 
+                if (marker4Equal || marker4Rot90Equal || marker4Rot180Equal || marker4Rot270Equal)
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue1, greenColor);
 
-                //CvInvoke.Imshow("draw cube", video);
+                if (marker5Equal || marker5Rot90Equal || marker5Rot180Equal || marker5Rot270Equal)
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue2, blueColor);
 
+                if (marker6Equal || marker6Rot90Equal || marker6Rot180Equal || marker6Rot270Equal)
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue4, redColor);
+
+                if (marker7Equal || marker7Rot90Equal || marker7Rot180Equal || marker7Rot270Equal)
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue4, redColor);
+
+                if (marker8Equal || marker8Rot90Equal || marker8Rot180Equal || marker8Rot270Equal)
+                    UtilityAR.DrawTextCube(video, intrinsic * rtMatrix, attackValue3, yellowColor);
             }
-
-
 
             CvInvoke.Imshow("Video", video);
         }
