@@ -215,7 +215,6 @@ namespace ARExercise
             // Draw filled floor
             VectorOfVectorOfPoint floorContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
             CvInvoke.DrawContours(img, floorContour, -1, new MCvScalar(0, 255, 0), -3);
-            //CvInvoke.DrawContours(img, floorContour, -1, new Bgr(0, 255, 0).MCvScalar, -1);
 
             // Draw top
             foreach (Tuple<int, int> li in lineIndexes.Skip(4).Take(4))
@@ -236,6 +235,13 @@ namespace ARExercise
             }
         }
 
+        /// <summary>
+        /// Draws a text at the origin (0,0) in the world-coordinate.
+        /// </summary>
+        /// <param name="img">The image to draw the text onto</param>
+        /// <param name="projection">The size of the text</param>
+        /// <param name="text">Text for total score / attack value</param>
+        /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
         public static void DrawText(IInputOutputArray img, Matrix<float> projection, string text, float scale = 1)
         {
             Matrix<float>[] worldPoints = new[]
@@ -263,7 +269,17 @@ namespace ARExercise
 
         }
 
-        public static void DrawTextCube(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, float scale = 100)
+        /// <summary>
+        /// Draws a modified Cube at the origin (0,0) in the world-coordinate.
+        /// </summary>
+        /// <param name="img">The image to draw the cube onto</param>
+        /// <param name="projection">The size of the cube</param>
+        /// <param name="attackValue">Text for total score / attack value</param>
+        /// <param name="color">Color of the cube's bottom</param>
+        /// <param name="color2">Color2 of the cube's pillars</param>
+        /// <param name="color3">Color3 of the cube's top</param>
+        /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
+        public static void DrawCustomCube(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, MCvScalar color2, MCvScalar color3, float scale = 100)
         {
             Matrix<float>[] worldPoints = new[]
             {
@@ -289,15 +305,13 @@ namespace ARExercise
             VectorOfVectorOfPoint floorContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
             CvInvoke.DrawContours(img, floorContour, -1, color, -3);
 
-            //CvInvoke.DrawMarker(texture, screenPoints[0], new MCvScalar(0,0,255), MarkerTypes.Square);
-
             // Draw top
             foreach (Tuple<int, int> li in lineIndexes.Skip(4).Take(4))
             {
                 Point p1 = screenPoints[li.Item1];
                 Point p2 = screenPoints[li.Item2];
 
-                CvInvoke.Line(img, p1, p2, color, 3);
+                CvInvoke.Line(img, p1, p2, color2, 3);
             }
 
             // Draw pillars
@@ -306,12 +320,258 @@ namespace ARExercise
                 Point p1 = screenPoints[li.Item1];
                 Point p2 = screenPoints[li.Item2];
 
-                CvInvoke.Line(img, p1, p2, color, 3);
+                CvInvoke.Line(img, p1, p2, color3, 3);
             }
 
             // Add text on top of floorContour
             CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
         }
+
+        /// <summary>
+        /// Draws a Pyramid at the origin (0,0) in the world-coordinate.
+        /// </summary>
+        /// <param name="img">The image to draw the Pyramid onto</param>
+        /// <param name="projection">The size of the Pyramid</param>
+        /// <param name="attackValue">Text for total score / attack value</param>
+        /// <param name="colorBase">Color of the bottom of the pyramid</param>
+        /// <param name="color">Color of the pillars of the pyramid</param>
+        /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
+        public static void DrawPyramid(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar colorBase, MCvScalar color, float scale = 100)
+        {
+            Matrix<float>[] worldPoints = new[]
+            {
+                new Matrix<float>(new float[] { 0, 0, 0, 2 }), new Matrix<float>(new float[] {scale, 0, 0, 1 }),
+                new Matrix<float> (new float[] { scale, scale, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 }),
+                new Matrix<float>(new float[] { scale/2, scale/2, -scale/2, 1}) // Apex of pyramid (its top)
+            };
+
+            Point[] screenPoints = worldPoints.Select(x => WorldToScreen(x, projection)).ToArray();
+
+            Tuple<int, int>[] lineIndexes = new[]
+            {
+                Tuple.Create(0, 1), Tuple.Create(1, 2), // Base
+                Tuple.Create(2, 3), Tuple.Create(3, 0),
+                Tuple.Create(0, 4), Tuple.Create(1, 4), // Sides
+                Tuple.Create(2, 4), Tuple.Create(3, 4)
+            };
+
+            // Draw filled base
+            VectorOfVectorOfPoint baseContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(4).ToArray()));
+            CvInvoke.DrawContours(img, baseContour, -1, colorBase, -3);
+
+            // Draw sides
+            foreach (Tuple<int, int> li in lineIndexes.Skip(4).Take(4))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color, 3);
+            }
+
+            // Add text on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+        }
+
+        /// <summary>
+        /// Draws a Hexagon at the origin (0,0) in the world-coordinate.
+        /// </summary>
+        /// <param name="img">The image to draw the Hexagon onto</param>
+        /// <param name="projection">The size of the Hexagon</param>
+        /// <param name="attackValue">Text for total score / attack value</param>
+        /// <param name="color">Color of the bottom of the hexagon</param>
+        /// <param name="color2">Color of the pillars of the hexagon</param>
+        /// <param name="color3">Color of the top of the hexagon</param>
+        /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
+        public static void DrawHexagon(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, MCvScalar color2, MCvScalar color3, float scale = 50)
+        {
+
+            Matrix<float>[] worldPoints = new[]
+            {
+                new Matrix<float>(new float[] { scale + scale, scale, 0, 1 }), // center point
+                new Matrix<float>(new float[] { scale + scale, scale, 0, 1 }), // bottom point
+                new Matrix<float>(new float[] { (scale / 2) + scale, scale + 55 * MathF.Sqrt(3) / 2, 0, 1 }), // bottom left point
+                new Matrix<float>(new float[] { (-scale / 2) + scale, scale + 55 * MathF.Sqrt(3) / 2, 0, 1 }), // top left point
+                new Matrix<float>(new float[] { -scale + scale, scale, 0, 1 }), // top point
+                new Matrix<float>(new float[] { (-scale / 2) + scale, -scale + 60 * MathF.Sqrt(3) / 2, 0, 1 }), // top right point
+                new Matrix<float>(new float[] { (scale / 2) + scale, -scale + 60 * MathF.Sqrt(3) / 2, 0, 1 }), // bottom right point
+
+                new Matrix<float>(new float[] { scale + scale, scale, scale *  -2, 1 }), // bottom pillar
+                new Matrix<float>(new float[] { (scale / 2) + scale, scale + 55 * MathF.Sqrt(3) / 2, scale * -2, 1 }), // bottom left pillar
+                new Matrix<float>(new float[] { (-scale / 2) + scale, scale + 55 * MathF.Sqrt(3) / 2, scale * -2, 1 }), // top left pillar
+                new Matrix<float>(new float[] { -scale + scale, scale, scale * -2, 1 }), // top pillar
+                new Matrix<float>(new float[] { (-scale / 2) + scale, -scale + 60 * MathF.Sqrt(3) / 2, scale * -2, 1 }), // top right pillar
+                new Matrix<float>(new float[] { (scale / 2) + scale, -scale + scale, scale * -2, 1 }) // bottom right pillar
+            };
+
+            Point[] screenPoints = worldPoints.Select(x => WorldToScreen(x, projection)).ToArray();
+
+            Tuple<int, int>[] lineIndexes = new[]
+            {
+                Tuple.Create(0, 1), // line from center
+                Tuple.Create(1, 2), Tuple.Create(2, 3), // Bottom
+                Tuple.Create(3, 4), Tuple.Create(4, 5), 
+                Tuple.Create(5, 6), Tuple.Create(6, 1),
+                Tuple.Create(7, 1), Tuple.Create(8, 2), // Pillars
+                Tuple.Create(9, 3), Tuple.Create(10, 4),
+                Tuple.Create(11, 5), Tuple.Create(12, 6),
+                Tuple.Create(7, 8), Tuple.Create(8, 9), // Top
+                Tuple.Create(9, 10), Tuple.Create(10, 11),
+                Tuple.Create(11, 12), Tuple.Create(12, 7)
+            };
+
+            // Draw filled base
+            VectorOfVectorOfPoint baseContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(7).ToArray()));
+            CvInvoke.DrawContours(img, baseContour, -1, color, -3);
+
+            //Draw Hexagon pillars
+            foreach (Tuple<int, int> li in lineIndexes.Skip(7).Take(6))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color2, 3);
+            }
+
+            // Draw Hexagon top
+            foreach (Tuple<int, int> li in lineIndexes.Skip(13))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color3, 3);
+            }
+
+            // Add text on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+        }
+
+        /// <summary>
+        /// Draws a Pentagon at the origin (0,0) in the world-coordinate.
+        /// </summary>
+        /// <param name="img">The image to draw the Pentagon onto</param>
+        /// <param name="projection">The size of the Pentagon</param>
+        /// <param name="attackValue">Text for total score / attack value</param>
+        /// <param name="color">Color of the bottom of the Pentagon</param>
+        /// <param name="color2">Color of the pillars of the Pentagon</param>
+        /// <param name="color3">Color of the top of the Pentagon</param>
+        /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
+        public static void DrawPentagon(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, MCvScalar color2, MCvScalar color3, float scale = 100)
+        {
+            Matrix<float>[] worldPoints = new[]
+            {
+                new Matrix<float>(new float[] { 0, scale * 0.5f, 0, 1 }), // top point
+                new Matrix<float>(new float[] { scale * 0.40f, 0, 0, 1 }), // top right point
+                new Matrix<float>(new float[] { scale, scale * 0.2f, 0, 1 }), // bottom right point
+                new Matrix<float>(new float[] { scale, scale * 0.8f, 0, 1 }), // bottom left point
+                new Matrix<float>(new float[] { scale * 0.40f, scale, 0, 1 }), // top left point
+                
+                new Matrix<float>(new float[] { 0, scale * 0.5f, -scale, 1 }),
+                new Matrix<float>(new float[] { scale * 0.4f, 0 * 0.5f, -scale, 1 }),
+                new Matrix<float>(new float[] { scale, scale * 0.2f, -scale, 1 }),
+                new Matrix<float>(new float[] { scale, scale * 0.8f, -scale, 1 }),
+                new Matrix<float>(new float[] { scale * 0.4f, scale, -scale, 1 })
+            };
+
+            Point[] screenPoints = worldPoints.Select(x => WorldToScreen(x, projection)).ToArray();
+
+            Tuple<int, int>[] lineIndexes = new[]
+            {
+                Tuple.Create(0, 1), Tuple.Create(1, 2), // Bottom Pentagon
+                Tuple.Create(2, 3), Tuple.Create(3, 4),
+                Tuple.Create(4, 0),
+                Tuple.Create(0, 5), Tuple.Create(1, 6), // Pillars
+                Tuple.Create(2, 7), Tuple.Create(3, 8),
+                Tuple.Create(4, 9),
+                Tuple.Create(6, 5), Tuple.Create(9, 5), // Top Pentagon
+                Tuple.Create(9, 8), Tuple.Create(8, 7),
+                Tuple.Create(7, 6)
+            };
+
+            // Draw filled base 
+            VectorOfVectorOfPoint baseContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(5).ToArray()));
+            CvInvoke.DrawContours(img, baseContour, -1, color, -3);
+
+            // Draw pillars 
+            foreach (Tuple<int, int> li in lineIndexes.Skip(5).Take(5))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color2, 3);
+            }
+
+            // Draw top 
+            foreach (Tuple<int, int> li in lineIndexes.Skip(10))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color3, 3);
+            }
+
+            // Add text on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+        }
+
+
+        /// <summary>
+        /// Draws a Triangle at the origin (0,0) in the world-coordinate.
+        /// </summary>
+        /// <param name="img">The image to draw the Triangle onto</param>
+        /// <param name="projection">The size of the Triangle</param>
+        /// <param name="attackValue">Text for total score / attack value</param>
+        /// <param name="color">Color of the bottom of the Triangle</param>
+        /// <param name="color2">Color of the pillars of the Triangle</param>
+        /// <param name="color3">Color of the top of the Triangle</param>
+        /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
+        public static void DrawTriangle(IInputOutputArray img, Matrix<float> projection, string attackValue, MCvScalar color, MCvScalar color2, MCvScalar color3, float scale = 100)
+        {
+            Matrix<float>[] worldPoints = new[]
+            {
+                new Matrix<float>(new float[] { scale, scale, 0, 1 }), // bottom left point
+                new Matrix<float>(new float[] { 0, scale / 2, 0, 1 }), // bottom top point
+                new Matrix<float>(new float[] { scale, -scale + scale, 0, 1 }), // bottom right point
+            
+                new Matrix<float>(new float[] { scale, scale, scale * -1, 1 }), // bottom left pillar
+                new Matrix<float>(new float[] { 0, scale / 2, scale * -1, 1 }), // top pillar
+                new Matrix<float>(new float[] { scale, -scale + scale, scale * -1, 1 }), // bottom right pillar
+            };
+
+            Point[] screenPoints = worldPoints.Select(x => WorldToScreen(x, projection)).ToArray();
+
+            Tuple<int, int>[] lineIndexes = new[]
+            {
+                Tuple.Create(0, 1), Tuple.Create(1, 2), Tuple.Create(2, 0), // bottom triangle
+                Tuple.Create(0, 3), Tuple.Create(1, 4), Tuple.Create(2, 5), // triangle pillars
+                Tuple.Create(3, 5), Tuple.Create(4, 3), Tuple.Create(5, 4) // top triangle
+            };
+
+            // Draw filled base
+            VectorOfVectorOfPoint baseContour = new VectorOfVectorOfPoint(new VectorOfPoint(screenPoints.Take(3).ToArray()));
+            CvInvoke.DrawContours(img, baseContour, -1, color, -3);
+
+            // Draw pillars
+            foreach (Tuple<int, int> li in lineIndexes.Skip(3).Take(3))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color2, 3);
+            }
+
+            // Draw top triangle
+            foreach (Tuple<int, int> li in lineIndexes.Skip(6))
+            {
+                Point point1 = screenPoints[li.Item1];
+                Point point2 = screenPoints[li.Item2];
+
+                CvInvoke.Line(img, point1, point2, color3, 3);
+            }
+
+            // Add text on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+        }
+
 
         /// <summary>
         /// Converts a homogeneous world coordinate to a screen point
