@@ -825,10 +825,11 @@ namespace ARExercise
             GetMarkers();
         }
 
-
+        /// <summary>
+        /// Sets the definitions for the markers, to be used in the update loop
+        /// </summary>
         public void GetMarkers()
         {
-            #region Markers for detection
             ///
             /// Marker 1
             /// 
@@ -871,11 +872,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker2
-            marker1Equal = pixelMatrix.Equals(marker1);
-            marker1Rot90Equal = pixelMatrix.Equals(marker1Rot90);
-            marker1Rot180Equal = pixelMatrix.Equals(marker1Rot180);
-            marker1Rot270Equal = pixelMatrix.Equals(marker1Rot270);
 
             ///
             /// Marker 2
@@ -919,14 +915,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker1
-            marker2Equal = pixelMatrix.Equals(marker2);
-            // compare pixelValues with Marker1Rot90
-            marker2Rot90Equal = pixelMatrix.Equals(marker2Rot90);
-            // compare pixelValues with Marker1Rot180
-            marker2Rot180Equal = pixelMatrix.Equals(marker2Rot180);
-            // compare pixelValues with Marker1Rot270
-            marker2Rot270Equal = pixelMatrix.Equals(marker2Rot270);
 
             ///
             /// Marker 3 normal
@@ -970,14 +958,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker3
-            marker3Equal = pixelMatrix.Equals(marker3);
-            // compare pixelValues with Marker3Rot90
-            marker3Rot90Equal = pixelMatrix.Equals(marker3Rot90);
-            // compare pixelValues with Marker3Rot180
-            marker3Rot180Equal = pixelMatrix.Equals(marker3Rot180);
-            // compare pixelValues with Marker3Rot270
-            marker3Rot270Equal = pixelMatrix.Equals(marker3Rot270);
 
             ///
             /// Marker 4
@@ -1021,14 +1001,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker3
-            marker4Equal = pixelMatrix.Equals(marker4);
-            // compare pixelValues with Marker3Rot90
-            marker4Rot90Equal = pixelMatrix.Equals(marker4Rot90);
-            // compare pixelValues with Marker3Rot180
-            marker4Rot180Equal = pixelMatrix.Equals(marker4Rot180);
-            // compare pixelValues with Marker3Rot270
-            marker4Rot270Equal = pixelMatrix.Equals(marker4Rot270);
 
             ///
             /// Marker 5
@@ -1072,14 +1044,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker 5
-            marker5Equal = pixelMatrix.Equals(marker5);
-            // compare pixelValues with Marker2Rot90
-            marker5Rot90Equal = pixelMatrix.Equals(marker5Rot90);
-            // compare pixelValues with Marker2Rot180
-            marker5Rot180Equal = pixelMatrix.Equals(marker5Rot180);
-            // compare pixelValues with Marker2Rot270
-            marker5Rot270Equal = pixelMatrix.Equals(marker5Rot270);
 
             ///
             /// Marker 6
@@ -1123,11 +1087,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker 6
-            marker6Equal = pixelMatrix.Equals(marker6);
-            marker6Rot90Equal = pixelMatrix.Equals(marker6Rot90);
-            marker6Rot180Equal = pixelMatrix.Equals(marker6Rot180);
-            marker6Rot270Equal = pixelMatrix.Equals(marker6Rot270);
 
             ///
             /// Marker 7
@@ -1171,11 +1130,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker 7
-            marker7Equal = pixelMatrix.Equals(marker7);
-            marker7Rot90Equal = pixelMatrix.Equals(marker7Rot90);
-            marker7Rot180Equal = pixelMatrix.Equals(marker7Rot180);
-            marker7Rot270Equal = pixelMatrix.Equals(marker7Rot270);
 
             ///
             /// Marker 8
@@ -1219,12 +1173,6 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
-            // compare pixelValues with Marker 8
-            marker8Equal = pixelMatrix.Equals(marker8);
-            marker8Rot90Equal = pixelMatrix.Equals(marker8Rot90);
-            marker8Rot180Equal = pixelMatrix.Equals(marker8Rot180);
-            marker8Rot270Equal = pixelMatrix.Equals(marker8Rot270);
-            #endregion
         }
 
 
@@ -1313,45 +1261,7 @@ namespace ARExercise
                 ///
                 /// Marker 1
                 /// 
-                Matrix<byte> marker1 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 1 rotated 90 degrees clockwise
-                Matrix<byte> marker1Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 1 rotated 180 degrees
-                Matrix<byte> marker1Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 1 rotated 270 degress clockwise
-                Matrix<byte> marker1Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+               
                 // compare pixelValues with Marker2
                 marker1Equal = pixelMatrix.Equals(marker1);
                 marker1Rot90Equal = pixelMatrix.Equals(marker1Rot90);
@@ -1361,45 +1271,7 @@ namespace ARExercise
                 ///
                 /// Marker 2
                 /// 
-                Matrix<byte> marker2 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 2 rotated 90 degrees clockwise
-                Matrix<byte> marker2Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 2 rotated 180 degrees
-                Matrix<byte> marker2Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 2 rotated 270 degress clockwise
-                Matrix<byte> marker2Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+                
                 // compare pixelValues with Marker1
                 marker2Equal = pixelMatrix.Equals(marker2);
                 // compare pixelValues with Marker1Rot90
@@ -1412,147 +1284,33 @@ namespace ARExercise
                 ///
                 /// Marker 3 normal
                 /// 
-                Matrix<byte> Marker3 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 3 rotated 90 degrees clockwise
-                Matrix<byte> Marker3Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 3 rotated 180 degrees
-                Matrix<byte> Marker3Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 3 rotated 270 degress clockwise
-                Matrix<byte> Marker3Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+                
                 // compare pixelValues with Marker3
-                marker3Equal = pixelMatrix.Equals(Marker3);
+                marker3Equal = pixelMatrix.Equals(marker3);
                 // compare pixelValues with Marker3Rot90
-                marker3Rot90Equal = pixelMatrix.Equals(Marker3Rot90);
+                marker3Rot90Equal = pixelMatrix.Equals(marker3Rot90);
                 // compare pixelValues with Marker3Rot180
-                marker3Rot180Equal = pixelMatrix.Equals(Marker3Rot180);
+                marker3Rot180Equal = pixelMatrix.Equals(marker3Rot180);
                 // compare pixelValues with Marker3Rot270
-                marker3Rot270Equal = pixelMatrix.Equals(Marker3Rot270);
+                marker3Rot270Equal = pixelMatrix.Equals(marker3Rot270);
 
                 ///
                 /// Marker 4
                 ///
-                Matrix<byte> Marker4 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 4 rotated 90 degrees clockwise
-                Matrix<byte> Marker4Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 4 rotated 180 degrees
-                Matrix<byte> Marker4Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 4 rotated 270 degress clockwise
-                Matrix<byte> Marker4Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+               
                 // compare pixelValues with Marker3
-                marker4Equal = pixelMatrix.Equals(Marker4);
+                marker4Equal = pixelMatrix.Equals(marker4);
                 // compare pixelValues with Marker3Rot90
-                marker4Rot90Equal = pixelMatrix.Equals(Marker4Rot90);
+                marker4Rot90Equal = pixelMatrix.Equals(marker4Rot90);
                 // compare pixelValues with Marker3Rot180
-                marker4Rot180Equal = pixelMatrix.Equals(Marker4Rot180);
+                marker4Rot180Equal = pixelMatrix.Equals(marker4Rot180);
                 // compare pixelValues with Marker3Rot270
-                marker4Rot270Equal = pixelMatrix.Equals(Marker4Rot270);
+                marker4Rot270Equal = pixelMatrix.Equals(marker4Rot270);
 
                 ///
                 /// Marker 5
                 ///
-                Matrix<byte> marker5 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 5 rotated 90 degrees clockwise
-                Matrix<byte> marker5Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 5 rotated 180 degrees
-                Matrix<byte> marker5Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 5 rotated 270 degress clockwise
-                Matrix<byte> marker5Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+                
                 // compare pixelValues with Marker 5
                 marker5Equal = pixelMatrix.Equals(marker5);
                 // compare pixelValues with Marker2Rot90
@@ -1565,45 +1323,7 @@ namespace ARExercise
                 ///
                 /// Marker 6
                 ///
-                Matrix<byte> marker6 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 6 rotated 90 degrees clockwise
-                Matrix<byte> marker6Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 6 rotated 180 degrees
-                Matrix<byte> marker6Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 6 rotated 270 degress clockwise
-                Matrix<byte> marker6Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+               
                 // compare pixelValues with Marker 6
                 marker6Equal = pixelMatrix.Equals(marker6);
                 marker6Rot90Equal = pixelMatrix.Equals(marker6Rot90);
@@ -1613,45 +1333,7 @@ namespace ARExercise
                 ///
                 /// Marker 7
                 ///
-                Matrix<byte> marker7 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 7 rotated 90 degrees clockwise
-                Matrix<byte> marker7Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 7 rotated 180 degrees
-                Matrix<byte> marker7Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 7 rotated 270 degress clockwise
-                Matrix<byte> marker7Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+               
                 // compare pixelValues with Marker 7
                 marker7Equal = pixelMatrix.Equals(marker7);
                 marker7Rot90Equal = pixelMatrix.Equals(marker7Rot90);
@@ -1661,45 +1343,7 @@ namespace ARExercise
                 ///
                 /// Marker 8
                 ///
-                Matrix<byte> marker8 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 8 rotated 90 degrees clockwise
-                Matrix<byte> marker8Rot90 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255,   0, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 8 rotated 180 degrees
-                Matrix<byte> marker8Rot180 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255,   0, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
-                // Marker 8 rotated 270 degress clockwise
-                Matrix<byte> marker8Rot270 = new Matrix<byte>(new byte[,]
-                {
-                    { 0,   0,   0,   0,   0, 0 },
-                    { 0, 255, 255,   0, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0, 255, 255, 255, 255, 0 },
-                    { 0,   0,   0,   0,   0, 0 }
-                });
+                
                 // compare pixelValues with Marker 8
                 marker8Equal = pixelMatrix.Equals(marker8);
                 marker8Rot90Equal = pixelMatrix.Equals(marker8Rot90);
