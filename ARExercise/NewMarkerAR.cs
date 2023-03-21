@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Emgu.CV;
+﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
@@ -11,8 +6,12 @@ using System.Drawing;
 
 namespace ARExercise
 {
-    public class MarkerAR : FrameLoop
+    //enum markers { MARK1 }
+
+    public class NewMarkerAR : FrameLoop
     {
+        int id;
+        int id2;
         VideoCapture vCap;
 
         Mat image;
@@ -48,7 +47,7 @@ namespace ARExercise
         bool marker8Equal, marker8Rot90Equal, marker8Rot180Equal, marker8Rot270Equal;
         #endregion
 
-        int attackValue1, attackValue2, attackValue3, attackValue4, 
+        int attackValue1, attackValue2, attackValue3, attackValue4,
             attackValue5, attackValue6, attackValue7, attackValue8;
 
         int totalAttackValue;
@@ -99,7 +98,7 @@ namespace ARExercise
         Matrix<byte> marker8Rot270;
         #endregion
 
-        public MarkerAR()
+        public NewMarkerAR()
         {
             vCap = new VideoCapture(1);
 
@@ -121,12 +120,15 @@ namespace ARExercise
 
             attackValue1 = 2;
             attackValue2 = 3;
-            attackValue3 = 5;
+            attackValue3 = 4;
             attackValue4 = 2;
             attackValue5 = 3;
             attackValue6 = 8;
             attackValue7 = 8;
-            attackValue8 = 5;
+            //attackValue8 = 4;
+
+            totalAttackValue = 0;
+            attackValues = new List<int>();
 
             greenColor = new MCvScalar(0, 255, 0);
             blueColor = new MCvScalar(255, 0, 0);
@@ -184,7 +186,7 @@ namespace ARExercise
                 VectorOfPointF newSquaredPoints = new VectorOfPointF();
 
                 // new points for each contour
-                newSquaredPoints.Push(new PointF[] { new PointF(0, 0), new PointF(100, 0), 
+                newSquaredPoints.Push(new PointF[] { new PointF(0, 0), new PointF(100, 0),
                     new PointF(100, 100), new PointF(0, 100) });
 
                 // transform the squared contours using FindHomography
@@ -642,6 +644,8 @@ namespace ARExercise
                 marker8Rot270Equal = pixelMatrix.Equals(marker8Rot270);
                 #endregion
 
+                //GetMarkers();
+
                 // Convert VectorOfPointF points to MCvPoint3D32f
                 MCvPoint3D32f[] mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
                 for (int n = 0; n < newSquaredPoints.Size; n++)
@@ -671,6 +675,9 @@ namespace ARExercise
                         { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
                 });
 
+                // List to store the attack values in
+                attackValues = new List<int>();
+
                 ///
                 /// Draw cubes, pyramides, hexagons
                 ///
@@ -682,6 +689,7 @@ namespace ARExercise
                 {
                     Console.WriteLine("Marker1 and pMatrix are equal");
                     UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
+                    attackValues.Add(attackValue1);
                 }
                 if (marker1Rot90Equal)
                 {
@@ -706,6 +714,7 @@ namespace ARExercise
                 {
                     Console.WriteLine("Marker2 and pMatrix are equal");
                     UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
+                    attackValues.Add(attackValue2);
                 }
                 if (marker2Rot90Equal)
                 {
@@ -730,6 +739,7 @@ namespace ARExercise
                 {
                     Console.WriteLine("Marker3 and pMatrix are equal");
                     UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
+                    attackValues.Add(attackValue3);
                 }
                 if (marker3Rot90Equal)
                 {
@@ -754,6 +764,7 @@ namespace ARExercise
                 {
                     Console.WriteLine("Marker4 and pMatrix are equal");
                     UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                    attackValues.Add(attackValue4);
                 }
                 if (marker4Rot90Equal)
                 {
@@ -778,6 +789,7 @@ namespace ARExercise
                 {
                     Console.WriteLine("Marker7 and pMatrix are equal");
                     UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
+                    attackValues.Add(attackValue7);
                 }
                 if (marker7Rot90Equal)
                 {
@@ -802,6 +814,7 @@ namespace ARExercise
                 {
                     Console.WriteLine("Marker8 and pMatrix are equal");
                     UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
+                    attackValues.Add(attackValue8);
                 }
                 if (marker8Rot90Equal)
                 {
@@ -820,6 +833,8 @@ namespace ARExercise
                 }
                 #endregion
             }
+            UtilityAR.DrawText(image, intrinsic * rtMatrix, attackValues.Sum().ToString(), 3);
+
             CvInvoke.Imshow("draw cube", image);
 
             GetMarkers();
@@ -873,6 +888,8 @@ namespace ARExercise
                     { 0,   0,   0,   0,   0, 0 }
             });
 
+            //marker1Equal = pixelMatrix.Equals(marker1) || pixelMatrix.Equals(marker1Rot90) || pixelMatrix.Equals(marker1Rot180) || pixelMatrix.Equals(marker1Rot270);
+
             ///
             /// Marker 2
             /// 
@@ -916,6 +933,8 @@ namespace ARExercise
                     { 0,   0,   0,   0,   0, 0 }
             });
 
+            //marker2Equal = pixelMatrix.Equals(marker2) && pixelMatrix.Equals(marker2Rot90) && pixelMatrix.Equals(marker2Rot180) && pixelMatrix.Equals(marker2Rot270);
+
             ///
             /// Marker 3 normal
             /// 
@@ -958,6 +977,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
+            //marker3Equal = pixelMatrix.Equals(marker3) && pixelMatrix.Equals(marker3Rot90) && pixelMatrix.Equals(marker3Rot180) && pixelMatrix.Equals(marker3Rot270);
 
             ///
             /// Marker 4
@@ -1001,6 +1021,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
+            //marker4Equal = pixelMatrix.Equals(marker4) || pixelMatrix.Equals(marker4Rot90) || pixelMatrix.Equals(marker4Rot180) || pixelMatrix.Equals(marker4Rot270);
 
             ///
             /// Marker 5
@@ -1044,6 +1065,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
+            //marker5Equal = pixelMatrix.Equals(marker5) && pixelMatrix.Equals(marker5Rot90) && pixelMatrix.Equals(marker5Rot180) && pixelMatrix.Equals(marker5Rot270);
 
             ///
             /// Marker 6
@@ -1087,6 +1109,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
+            //marker6Equal = pixelMatrix.Equals(marker6) && pixelMatrix.Equals(marker6Rot90) && pixelMatrix.Equals(marker6Rot180) && pixelMatrix.Equals(marker6Rot270);
 
             ///
             /// Marker 7
@@ -1130,6 +1153,7 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
+            //marker7Equal = pixelMatrix.Equals(marker7) && pixelMatrix.Equals(marker7Rot90) && pixelMatrix.Equals(marker7Rot180) && pixelMatrix.Equals(marker7Rot270);
 
             ///
             /// Marker 8
@@ -1173,8 +1197,8 @@ namespace ARExercise
                     { 0, 255, 255, 255, 255, 0 },
                     { 0,   0,   0,   0,   0, 0 }
             });
+            //marker8Equal = pixelMatrix.Equals(marker8) && pixelMatrix.Equals(marker8Rot90) && pixelMatrix.Equals(marker8Rot180) && pixelMatrix.Equals(marker8Rot270);
         }
-
 
         public override void OnFrame()
         {
@@ -1257,98 +1281,36 @@ namespace ARExercise
 
                 // new matrix that takes in the pixelValues
                 Matrix<byte> pixelMatrix = new Matrix<byte>(pixelValues);
-                #region Markers for detection
-                ///
-                /// Marker 1
-                /// 
-               
-                // compare pixelValues with Marker2
-                marker1Equal = pixelMatrix.Equals(marker1);
-                marker1Rot90Equal = pixelMatrix.Equals(marker1Rot90);
-                marker1Rot180Equal = pixelMatrix.Equals(marker1Rot180);
-                marker1Rot270Equal = pixelMatrix.Equals(marker1Rot270);
 
+                #region Compare pixel matrix to markers
                 ///
-                /// Marker 2
-                /// 
-                
-                // compare pixelValues with Marker1
-                marker2Equal = pixelMatrix.Equals(marker2);
-                // compare pixelValues with Marker1Rot90
-                marker2Rot90Equal = pixelMatrix.Equals(marker2Rot90);
-                // compare pixelValues with Marker1Rot180
-                marker2Rot180Equal = pixelMatrix.Equals(marker2Rot180);
-                // compare pixelValues with Marker1Rot270
-                marker2Rot270Equal = pixelMatrix.Equals(marker2Rot270);
+                /// Compare pixel matrix to markers
+                //
 
-                ///
-                /// Marker 3 normal
-                /// 
-                
-                // compare pixelValues with Marker3
-                marker3Equal = pixelMatrix.Equals(marker3);
-                // compare pixelValues with Marker3Rot90
-                marker3Rot90Equal = pixelMatrix.Equals(marker3Rot90);
-                // compare pixelValues with Marker3Rot180
-                marker3Rot180Equal = pixelMatrix.Equals(marker3Rot180);
-                // compare pixelValues with Marker3Rot270
-                marker3Rot270Equal = pixelMatrix.Equals(marker3Rot270);
+                // compare pixelValues with Marker 1
+                marker1Equal = pixelMatrix.Equals(marker1) || pixelMatrix.Equals(marker1Rot90) 
+                    || pixelMatrix.Equals(marker1Rot180) || pixelMatrix.Equals(marker1Rot270);
 
-                ///
-                /// Marker 4
-                ///
-               
-                // compare pixelValues with Marker3
-                marker4Equal = pixelMatrix.Equals(marker4);
-                // compare pixelValues with Marker3Rot90
-                marker4Rot90Equal = pixelMatrix.Equals(marker4Rot90);
-                // compare pixelValues with Marker3Rot180
-                marker4Rot180Equal = pixelMatrix.Equals(marker4Rot180);
-                // compare pixelValues with Marker3Rot270
-                marker4Rot270Equal = pixelMatrix.Equals(marker4Rot270);
+                // compare pixelValues with Marker 2
+                marker2Equal = pixelMatrix.Equals(marker2) || pixelMatrix.Equals(marker2Rot90) || pixelMatrix.Equals(marker2Rot180) || pixelMatrix.Equals(marker2Rot270);
 
-                ///
-                /// Marker 5
-                ///
-                
+                // compare pixelValues with Marker 3
+                marker3Equal = pixelMatrix.Equals(marker3) || pixelMatrix.Equals(marker3Rot90) || pixelMatrix.Equals(marker3Rot180) || pixelMatrix.Equals(marker3Rot270);
+
+                // compare pixelValues with Marker 4
+                marker4Equal = pixelMatrix.Equals(marker4) || pixelMatrix.Equals(marker4Rot90) || pixelMatrix.Equals(marker4Rot180) || pixelMatrix.Equals(marker4Rot270);
+
                 // compare pixelValues with Marker 5
-                marker5Equal = pixelMatrix.Equals(marker5);
-                // compare pixelValues with Marker2Rot90
-                marker5Rot90Equal = pixelMatrix.Equals(marker5Rot90);
-                // compare pixelValues with Marker2Rot180
-                marker5Rot180Equal = pixelMatrix.Equals(marker5Rot180);
-                // compare pixelValues with Marker2Rot270
-                marker5Rot270Equal = pixelMatrix.Equals(marker5Rot270);
+                marker5Equal = pixelMatrix.Equals(marker5) || pixelMatrix.Equals(marker5Rot90) || pixelMatrix.Equals(marker5Rot180) || pixelMatrix.Equals(marker5Rot270);
 
-                ///
-                /// Marker 6
-                ///
-               
                 // compare pixelValues with Marker 6
-                marker6Equal = pixelMatrix.Equals(marker6);
-                marker6Rot90Equal = pixelMatrix.Equals(marker6Rot90);
-                marker6Rot180Equal = pixelMatrix.Equals(marker6Rot180);
-                marker6Rot270Equal = pixelMatrix.Equals(marker6Rot270);
+                marker6Equal = pixelMatrix.Equals(marker6) || pixelMatrix.Equals(marker6Rot90) || pixelMatrix.Equals(marker6Rot180) || pixelMatrix.Equals(marker6Rot270);
 
-                ///
-                /// Marker 7
-                ///
-               
                 // compare pixelValues with Marker 7
-                marker7Equal = pixelMatrix.Equals(marker7);
-                marker7Rot90Equal = pixelMatrix.Equals(marker7Rot90);
-                marker7Rot180Equal = pixelMatrix.Equals(marker7Rot180);
-                marker7Rot270Equal = pixelMatrix.Equals(marker7Rot270);
+                marker7Equal = pixelMatrix.Equals(marker7) || pixelMatrix.Equals(marker7Rot90) || pixelMatrix.Equals(marker7Rot180) || pixelMatrix.Equals(marker7Rot270);
 
-                ///
-                /// Marker 8
-                ///
-                
                 // compare pixelValues with Marker 8
-                marker8Equal = pixelMatrix.Equals(marker8);
-                marker8Rot90Equal = pixelMatrix.Equals(marker8Rot90);
-                marker8Rot180Equal = pixelMatrix.Equals(marker8Rot180);
-                marker8Rot270Equal = pixelMatrix.Equals(marker8Rot270);
+                marker8Equal = pixelMatrix.Equals(marker8) || pixelMatrix.Equals(marker8Rot90) || pixelMatrix.Equals(marker8Rot180) || pixelMatrix.Equals(marker8Rot270);
 
                 #endregion
 
@@ -1382,123 +1344,104 @@ namespace ARExercise
                 });
 
 
-                totalAttackValue = 0;
+                
                 // List to store the attack values in
-                attackValues = new List<int>();
+                
+
+                id = 0;
+                id2 = 0;
 
                 ///
                 /// Draw
                 ///
+                totalAttackValue = 0;
+
+
+
                 #region Draw geometrical Shapes
-                if (marker1Equal || marker1Rot90Equal || marker1Rot180Equal || marker1Rot270Equal)
+
+                if (marker1Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue1.ToString());
-                    //totalAttackValue += attackValue1;
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
                     if (!attackValues.Contains(attackValue1))
                     {
-
-                        UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
+                        
                         attackValues.Add(attackValue1);
                     }
                 }
-
-                if (marker2Equal || marker2Rot90Equal || marker2Rot180Equal || marker2Rot270Equal)
+                if (marker2Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue2.ToString());
-                    //totalAttackValue += attackValue2;
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue2.ToString(), blueColor, yellowColor, greenColor);
                     if (!attackValues.Contains(attackValue2))
                     {
-
-                        UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue2.ToString(), blueColor, yellowColor, greenColor);
+                        
                         attackValues.Add(attackValue2);
                     }
                 }
-
-                if (marker3Equal || marker3Rot90Equal || marker3Rot180Equal || marker3Rot270Equal)
+                if (marker3Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue3.ToString());
-                    //totalAttackValue += attackValue3;
+                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
                     if (!attackValues.Contains(attackValue3))
                     {
-
-                        UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                        
                         attackValues.Add(attackValue3);
                     }
                 }
-
-                if (marker4Equal || marker4Rot90Equal || marker4Rot180Equal || marker4Rot270Equal)
+                if (marker4Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue1.ToString());
-                    //totalAttackValue += attackValue1;
+                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue4.ToString(), greenColor, redColor, blueColor);
                     if (!attackValues.Contains(attackValue4))
                     {
-
-                        UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue4.ToString(), greenColor, redColor, blueColor);
+                        
                         attackValues.Add(attackValue4);
                     }
                 }
-
-                if (marker5Equal || marker5Rot90Equal || marker5Rot180Equal || marker5Rot270Equal)
+                if (marker5Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue2.ToString());
-                    //totalAttackValue += attackValue2;
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue5.ToString(), blueColor, yellowColor, greenColor);
                     if (!attackValues.Contains(attackValue5))
                     {
-
-                        UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue5.ToString(), blueColor, yellowColor, greenColor);
+                        
                         attackValues.Add(attackValue5);
                     }
                 }
-
-                if (marker6Equal || marker6Rot90Equal || marker6Rot180Equal || marker6Rot270Equal)
+                if (marker6Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue4.ToString());
-                    //totalAttackValue += attackValue4;
+                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue6.ToString(), redColor, greenColor, yellowColor);
                     if (!attackValues.Contains(attackValue6))
                     {
-
-                        UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue6.ToString(), redColor, greenColor, yellowColor);
+                        
                         attackValues.Add(attackValue6);
                     }
                 }
-
-                if (marker7Equal || marker7Rot90Equal || marker7Rot180Equal || marker7Rot270Equal)
+                if (marker7Equal)
                 {
-                    //totalAttackValue += int.Parse(attackValue4.ToString());
-                    //totalAttackValue += attackValue4;
+                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue7.ToString(), redColor, greenColor, yellowColor);
                     if (!attackValues.Contains(attackValue7))
                     {
-
-                        UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue7.ToString(), redColor, greenColor, yellowColor);
+                        
                         attackValues.Add(attackValue7);
                     }
                 }
-
-                if (marker8Equal || marker8Rot90Equal || marker8Rot180Equal || marker8Rot270Equal)
+                //else if (marker8Equal)
+                //{
+                //    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                //    if (!attackValues.Contains(attackValue8))
+                //    {
+                        
+                //        attackValues.Add(attackValue8);
+                //    }
+                //}
+                else
                 {
-                    //totalAttackValue += int.Parse(attackValue3.ToString());
-                    //totalAttackValue += attackValue3;
-                    if (!attackValues.Contains(attackValue8))
-                    {
-                        UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
-                        attackValues.Add(attackValue8);
-
-                    }
+                    totalAttackValue = 0;
                 }
-                #endregion
 
+                #endregion
                 
             }
             totalAttackValue = attackValues.Sum();
-
-
-
-            // calculate the total attack value by summing up all the attack values in the list
-            //int totalAttackVal = attackValues.Sum();
-
-            //UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue, colour);
             UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString());
-            Console.WriteLine(totalAttackValue);
 
             CvInvoke.Imshow("Video", video);
         }
