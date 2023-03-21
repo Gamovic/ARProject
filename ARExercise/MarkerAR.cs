@@ -1497,7 +1497,7 @@ namespace ARExercise
             //int totalAttackVal = attackValues.Sum();
 
             //UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue, colour);
-            UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString());
+            //UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString());
             Console.WriteLine(totalAttackValue);
 
             CvInvoke.Imshow("Video", video);

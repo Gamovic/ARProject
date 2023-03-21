@@ -6,12 +6,8 @@ using System.Drawing;
 
 namespace ARExercise
 {
-    //enum markers { MARK1 }
-
     public class NewMarkerAR : FrameLoop
     {
-        int id;
-        int id2;
         VideoCapture vCap;
 
         Mat image;
@@ -47,10 +43,14 @@ namespace ARExercise
         bool marker8Equal, marker8Rot90Equal, marker8Rot180Equal, marker8Rot270Equal;
         #endregion
 
+        bool markerFound;
+
         int attackValue1, attackValue2, attackValue3, attackValue4,
             attackValue5, attackValue6, attackValue7, attackValue8;
 
         int totalAttackValue;
+        int totalAttackValue2;
+
         List<int> attackValues;
 
         //MCvScalar colour;
@@ -125,15 +125,19 @@ namespace ARExercise
             attackValue5 = 3;
             attackValue6 = 8;
             attackValue7 = 8;
-            //attackValue8 = 4;
+            attackValue8 = 4;
 
             totalAttackValue = 0;
+            totalAttackValue2 = 0;
+
             attackValues = new List<int>();
 
             greenColor = new MCvScalar(0, 255, 0);
             blueColor = new MCvScalar(255, 0, 0);
             yellowColor = new MCvScalar(0, 255, 255);
             redColor = new MCvScalar(0, 0, 255);
+
+            markerFound = false;
 
             // from color to gray
             CvInvoke.CvtColor(image, grayImage, ColorConversion.Bgr2Gray);
@@ -682,158 +686,158 @@ namespace ARExercise
                 /// Draw cubes, pyramides, hexagons
                 ///
                 #region Draw geometrical shapes
-                ///
-                /// Check marker 1 and draw cube if pixelMatrix equals marker 1
-                ///
-                if (marker1Equal)
-                {
-                    Console.WriteLine("Marker1 and pMatrix are equal");
-                    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
-                    attackValues.Add(attackValue1);
-                }
-                if (marker1Rot90Equal)
-                {
-                    Console.WriteLine("Marker1Rot90 and pMatrix are equal");
-                    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
-                }
-                if (marker1Rot180Equal)
-                {
-                    Console.WriteLine("Marker1Rot180 and pMatrix are equal");
-                    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
-                }
-                if (marker1Rot270Equal)
-                {
-                    Console.WriteLine("Marker1Rot270 and pMatrix are equal");
-                    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
-                }
+                /////
+                ///// Check marker 1 and draw cube if pixelMatrix equals marker 1
+                /////
+                //if (marker1Equal)
+                //{
+                //    Console.WriteLine("Marker1 and pMatrix are equal");
+                //    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
+                //    attackValues.Add(attackValue1);
+                //}
+                //if (marker1Rot90Equal)
+                //{
+                //    Console.WriteLine("Marker1Rot90 and pMatrix are equal");
+                //    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
+                //}
+                //if (marker1Rot180Equal)
+                //{
+                //    Console.WriteLine("Marker1Rot180 and pMatrix are equal");
+                //    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
+                //}
+                //if (marker1Rot270Equal)
+                //{
+                //    Console.WriteLine("Marker1Rot270 and pMatrix are equal");
+                //    UtilityAR.DrawTriangle(image, intrinsic * rtMatrix, attackValue1.ToString(), blueColor, yellowColor, redColor);
+                //}
 
-                ///
-                /// Check marker 2 and draw cube if pixelMatrix equals marker 2
-                ///
-                if (marker2Equal)
-                {
-                    Console.WriteLine("Marker2 and pMatrix are equal");
-                    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
-                    attackValues.Add(attackValue2);
-                }
-                if (marker2Rot90Equal)
-                {
-                    Console.WriteLine("Marker2Rot90 and pMatrix are equal");
-                    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
-                }
-                if (marker2Rot180Equal)
-                {
-                    Console.WriteLine("Marker2Rot180 and pMatrix are equal");
-                    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
-                }
-                if (marker2Rot270Equal)
-                {
-                    Console.WriteLine("Marker2Rot270 and pMatrix are equal");
-                    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
-                }
+                /////
+                ///// Check marker 2 and draw cube if pixelMatrix equals marker 2
+                /////
+                //if (marker2Equal)
+                //{
+                //    Console.WriteLine("Marker2 and pMatrix are equal");
+                //    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
+                //    attackValues.Add(attackValue2);
+                //}
+                //if (marker2Rot90Equal)
+                //{
+                //    Console.WriteLine("Marker2Rot90 and pMatrix are equal");
+                //    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
+                //}
+                //if (marker2Rot180Equal)
+                //{
+                //    Console.WriteLine("Marker2Rot180 and pMatrix are equal");
+                //    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
+                //}
+                //if (marker2Rot270Equal)
+                //{
+                //    Console.WriteLine("Marker2Rot270 and pMatrix are equal");
+                //    UtilityAR.DrawHexagon(image, intrinsic * rtMatrix, attackValue4.ToString(), redColor, blueColor, yellowColor);
+                //}
 
-                ///
-                /// Check marker 3 and draw cube if pixelMatrix equals marker 3
-                ///
-                if (marker3Equal)
-                {
-                    Console.WriteLine("Marker3 and pMatrix are equal");
-                    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
-                    attackValues.Add(attackValue3);
-                }
-                if (marker3Rot90Equal)
-                {
-                    Console.WriteLine("Marker3Rot90 and pMatrix are equal");
-                    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
-                }
-                if (marker3Rot180Equal)
-                {
-                    Console.WriteLine("Marker3Rot180 and pMatrix are equal");
-                    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
-                }
-                if (marker3Rot270Equal)
-                {
-                    Console.WriteLine("Marker3Rot270 and pMatrix are equal");
-                    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
-                }
+                /////
+                ///// Check marker 3 and draw cube if pixelMatrix equals marker 3
+                /////
+                //if (marker3Equal)
+                //{
+                //    Console.WriteLine("Marker3 and pMatrix are equal");
+                //    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
+                //    attackValues.Add(attackValue3);
+                //}
+                //if (marker3Rot90Equal)
+                //{
+                //    Console.WriteLine("Marker3Rot90 and pMatrix are equal");
+                //    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
+                //}
+                //if (marker3Rot180Equal)
+                //{
+                //    Console.WriteLine("Marker3Rot180 and pMatrix are equal");
+                //    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
+                //}
+                //if (marker3Rot270Equal)
+                //{
+                //    Console.WriteLine("Marker3Rot270 and pMatrix are equal");
+                //    UtilityAR.DrawPentagon(image, intrinsic * rtMatrix, attackValue3.ToString(), blueColor, yellowColor, greenColor);
+                //}
 
-                ///
-                /// Check marker 4 and draw cube if pixelMatrix equals marker 4
-                ///
-                if (marker4Equal)
-                {
-                    Console.WriteLine("Marker4 and pMatrix are equal");
-                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
-                    attackValues.Add(attackValue4);
-                }
-                if (marker4Rot90Equal)
-                {
-                    Console.WriteLine("Marker4Rot90 and pMatrix are equal");
-                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
-                }
-                if (marker4Rot180Equal)
-                {
-                    Console.WriteLine("Marker4Rot180 and pMatrix are equal");
-                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
-                }
-                if (marker4Rot270Equal)
-                {
-                    Console.WriteLine("Marker4Rot270 and pMatrix are equal");
-                    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
-                }
+                /////
+                ///// Check marker 4 and draw cube if pixelMatrix equals marker 4
+                /////
+                //if (marker4Equal)
+                //{
+                //    Console.WriteLine("Marker4 and pMatrix are equal");
+                //    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                //    attackValues.Add(attackValue4);
+                //}
+                //if (marker4Rot90Equal)
+                //{
+                //    Console.WriteLine("Marker4Rot90 and pMatrix are equal");
+                //    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                //}
+                //if (marker4Rot180Equal)
+                //{
+                //    Console.WriteLine("Marker4Rot180 and pMatrix are equal");
+                //    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                //}
+                //if (marker4Rot270Equal)
+                //{
+                //    Console.WriteLine("Marker4Rot270 and pMatrix are equal");
+                //    UtilityAR.DrawCube(image, intrinsic * rtMatrix);
+                //}
 
-                ///
-                /// Check marker 7 and draw cube if pixelMatrix equals marker 7
-                ///
-                if (marker7Equal)
-                {
-                    Console.WriteLine("Marker7 and pMatrix are equal");
-                    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
-                    attackValues.Add(attackValue7);
-                }
-                if (marker7Rot90Equal)
-                {
-                    Console.WriteLine("Marker7Rot90 and pMatrix are equal");
-                    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
-                }
-                if (marker7Rot180Equal)
-                {
-                    Console.WriteLine("Marker7Rot180 and pMatrix are equal");
-                    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
-                }
-                if (marker7Rot270Equal)
-                {
-                    Console.WriteLine("Marker7Rot270 and pMatrix are equal");
-                    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
-                }
+                /////
+                ///// Check marker 7 and draw cube if pixelMatrix equals marker 7
+                /////
+                //if (marker7Equal)
+                //{
+                //    Console.WriteLine("Marker7 and pMatrix are equal");
+                //    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
+                //    attackValues.Add(attackValue7);
+                //}
+                //if (marker7Rot90Equal)
+                //{
+                //    Console.WriteLine("Marker7Rot90 and pMatrix are equal");
+                //    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
+                //}
+                //if (marker7Rot180Equal)
+                //{
+                //    Console.WriteLine("Marker7Rot180 and pMatrix are equal");
+                //    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
+                //}
+                //if (marker7Rot270Equal)
+                //{
+                //    Console.WriteLine("Marker7Rot270 and pMatrix are equal");
+                //    UtilityAR.DrawPyramid(image, intrinsic * rtMatrix, attackValue3.ToString(), greenColor, redColor);
+                //}
 
-                ///
-                /// Check marker 8 and draw cube if pixelMatrix equals marker 8
-                ///
-                if (marker8Equal)
-                {
-                    Console.WriteLine("Marker8 and pMatrix are equal");
-                    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
-                    attackValues.Add(attackValue8);
-                }
-                if (marker8Rot90Equal)
-                {
-                    Console.WriteLine("Marker8Rot90 and pMatrix are equal");
-                    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
-                }
-                if (marker8Rot180Equal)
-                {
-                    Console.WriteLine("Marker8Rot180 and pMatrix are equal");
-                    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
-                }
-                if (marker8Rot270Equal)
-                {
-                    Console.WriteLine("Marker8Rot270 and pMatrix are equal");
-                    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
-                }
+                /////
+                ///// Check marker 8 and draw cube if pixelMatrix equals marker 8
+                /////
+                //if (marker8Equal)
+                //{
+                //    Console.WriteLine("Marker8 and pMatrix are equal");
+                //    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
+                //    attackValues.Add(attackValue8);
+                //}
+                //if (marker8Rot90Equal)
+                //{
+                //    Console.WriteLine("Marker8Rot90 and pMatrix are equal");
+                //    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
+                //}
+                //if (marker8Rot180Equal)
+                //{
+                //    Console.WriteLine("Marker8Rot180 and pMatrix are equal");
+                //    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
+                //}
+                //if (marker8Rot270Equal)
+                //{
+                //    Console.WriteLine("Marker8Rot270 and pMatrix are equal");
+                //    UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
+                //}
                 #endregion
             }
-            UtilityAR.DrawText(image, intrinsic * rtMatrix, attackValues.Sum().ToString(), 3);
+            //UtilityAR.DrawText(image, intrinsic * rtMatrix, attackValues.Sum().ToString(), 3);
 
             CvInvoke.Imshow("draw cube", image);
 
@@ -1343,26 +1347,16 @@ namespace ARExercise
                         { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
                 });
 
-
-                
-                // List to store the attack values in
-                
-
-                id = 0;
-                id2 = 0;
-
                 ///
                 /// Draw
                 ///
-                totalAttackValue = 0;
-
-
-
                 #region Draw geometrical Shapes
 
                 if (marker1Equal)
                 {
+                    
                     UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue1))
                     {
                         
@@ -1371,7 +1365,9 @@ namespace ARExercise
                 }
                 if (marker2Equal)
                 {
+
                     UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue2.ToString(), blueColor, yellowColor, greenColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue2))
                     {
                         
@@ -1381,6 +1377,7 @@ namespace ARExercise
                 if (marker3Equal)
                 {
                     UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue3))
                     {
                         
@@ -1390,6 +1387,7 @@ namespace ARExercise
                 if (marker4Equal)
                 {
                     UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue4.ToString(), greenColor, redColor, blueColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue4))
                     {
                         
@@ -1399,6 +1397,7 @@ namespace ARExercise
                 if (marker5Equal)
                 {
                     UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue5.ToString(), blueColor, yellowColor, greenColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue5))
                     {
                         
@@ -1408,6 +1407,7 @@ namespace ARExercise
                 if (marker6Equal)
                 {
                     UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue6.ToString(), redColor, greenColor, yellowColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue6))
                     {
                         
@@ -1417,31 +1417,41 @@ namespace ARExercise
                 if (marker7Equal)
                 {
                     UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue7.ToString(), redColor, greenColor, yellowColor);
+                    markerFound = true;
                     if (!attackValues.Contains(attackValue7))
                     {
                         
                         attackValues.Add(attackValue7);
                     }
                 }
-                //else if (marker8Equal)
-                //{
-                //    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
-                //    if (!attackValues.Contains(attackValue8))
-                //    {
-                        
-                //        attackValues.Add(attackValue8);
-                //    }
-                //}
-                else
+                if (marker8Equal)
                 {
-                    totalAttackValue = 0;
+                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                    markerFound = true;
+                    if (!attackValues.Contains(attackValue8))
+                    {
+
+                        attackValues.Add(attackValue8);
+                    }
                 }
 
                 #endregion
-                
+
             }
-            totalAttackValue = attackValues.Sum();
-            UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString());
+
+            if (attackValues.Count > 0 && attackValues.Count < 3)
+            {
+                totalAttackValue = attackValues.Sum();
+                //totalAttackValue = attackValues[0] + attackValues[1];
+            }
+            if (attackValues.Count > 3 && attackValues.Count < 5)
+            {
+                //totalAttackValue = attackValues.Sum();
+                //totalAttackValue2 = attackValues[2];
+                totalAttackValue2 = attackValues[2] + attackValues[3];
+            }
+
+            UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString(), totalAttackValue2.ToString());
 
             CvInvoke.Imshow("Video", video);
         }

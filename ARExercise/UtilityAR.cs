@@ -9,8 +9,8 @@ namespace ARExercise
     public static class UtilityAR
     {
         // Dont change these values
-        private static int frameWidth = 600;
-        private static int frameHeight = 600;
+        private static int frameWidth = 800;
+        private static int frameHeight = 800;
         // load image
         //static Mat texture = CvInvoke.Imread("four.jpg");
 
@@ -242,31 +242,30 @@ namespace ARExercise
         /// <param name="projection">The size of the text</param>
         /// <param name="text">Text for total score / attack value</param>
         /// <param name="scale">the projection-matrix to use for converting world coordinates to screen coordinates</param>
-        public static void DrawText(IInputOutputArray img, Matrix<float> projection, string text, float scale = 1)
+        public static void DrawText(IInputOutputArray img, Matrix<float> projection, string playerscore, string playerscore2, float scale = 1)
         {
             Matrix<float>[] worldPoints = new[]
             {
                 new Matrix<float>(new float[] { 0, 0, 0, 1 }), new Matrix<float>(new float[] { scale, 0, 0, 1 }),
-                new Matrix<float>(new float[] { scale, scale, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 }),
-                new Matrix<float>(new float[] { 0, 0, -scale, 1 }), new Matrix<float>(new float[] { scale, 0, -scale, 1 }),
-                new Matrix<float>(new float[] { scale, scale, -scale, 1 }), new Matrix<float>(new float[] { 0, scale, -scale, 1 })
+                new Matrix<float>(new float[] { -140, 930, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 })
+            };
+            Matrix<float>[] worldPoints2 = new[]
+            {
+                new Matrix<float>(new float[] { 0, 0, 0, 1 }), new Matrix<float>(new float[] { scale, 0, 0, 1 }),
+                new Matrix<float>(new float[] { 80, -220, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 })
             };
 
             Point[] screenPoints = worldPoints
                 .Select(x => WorldToScreen(x, projection)).ToArray();
 
-            Tuple<int, int>[] lineIndexes = new[] {
-                Tuple.Create(0, 1), Tuple.Create(1, 2), // Floor
-                Tuple.Create(2, 3), Tuple.Create(3, 0),
-                Tuple.Create(4, 5), Tuple.Create(5, 6), // Top
-                Tuple.Create(6, 7), Tuple.Create(7, 4),
-                Tuple.Create(0, 4), Tuple.Create(1, 5), // Pillars
-                Tuple.Create(2, 6), Tuple.Create(3, 7)
-            };
+            Point[] screenPoints2 = worldPoints2
+                .Select(x => WorldToScreen(x, projection)).ToArray();
 
             // Add text on top of floorContour
-            CvInvoke.PutText(img, text, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(255, 0, 0), 3);
+            CvInvoke.PutText(img, playerscore, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(255, 0, 0), 3);
+            CvInvoke.PutText(img, playerscore2, new Point((int)((screenPoints2[0].X + screenPoints2[2].X) / 2), (int)((screenPoints2[0].Y + screenPoints2[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 255), 3);
 
+            
         }
 
         /// <summary>
