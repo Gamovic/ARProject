@@ -568,7 +568,7 @@ namespace ARExercise
             }
 
             // Add text on top of floorContour
-            //CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
         }
 
 

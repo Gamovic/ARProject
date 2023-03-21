@@ -1355,7 +1355,7 @@ namespace ARExercise
                 if (marker1Equal)
                 {
                     
-                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
+                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
                     markerFound = true;
                     if (!attackValues.Contains(attackValue1))
                     {
