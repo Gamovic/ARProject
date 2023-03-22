@@ -10,12 +10,23 @@ namespace ARExercise
     {
         VideoCapture vCap;
 
+        int numRows;
+        int numCols;
+        int cellSize;
+
         Mat image;
         Mat video;
         Mat grayImage;
         Mat binaryImage;
         Mat hierarchy;
         Mat contourImage;
+        Mat homography;
+        Mat transformedImage;
+        Mat grayTransImage;
+        Mat binaryTransformedImage;
+        Mat biTransImage;
+
+        MCvPoint3D32f[] mcPoints;
 
         Matrix<float> intrinsic;
         Matrix<float> distortionCoeff;
@@ -24,13 +35,26 @@ namespace ARExercise
         Matrix<float> translationVector = new Matrix<float>(3, 1);
         Matrix<float> rotationMatrix = new Matrix<float>(3, 3);
 
+        byte[,] pixelValues;
+
         Matrix<byte> pixelMatrix;
+
+        float[,] rValues;
+        float[,] tValues;
 
         Matrix<float> rtMatrix;
 
         VectorOfVectorOfPoint contours;
 
         VectorOfVectorOfPoint squareContours;
+
+        VectorOfPoint squaredContours;
+
+        VectorOfPointF newSquaredPoints;
+
+        Point[] points;
+        PointF[] imagePoints;
+
 
         #region Marker bools
         bool marker1Equal, marker1Rot90Equal, marker1Rot180Equal, marker1Rot270Equal;
@@ -185,36 +209,36 @@ namespace ARExercise
             for (int i = 0; i < squareContours.Size; i++)
             {
                 // input
-                VectorOfPoint squaredContours = squareContours[i];
+                squaredContours = squareContours[i];
                 // output
-                VectorOfPointF newSquaredPoints = new VectorOfPointF();
+                newSquaredPoints = new VectorOfPointF();
 
                 // new points for each contour
                 newSquaredPoints.Push(new PointF[] { new PointF(0, 0), new PointF(100, 0),
                     new PointF(100, 100), new PointF(0, 100) });
 
                 // transform the squared contours using FindHomography
-                Mat homography = CvInvoke.FindHomography(squaredContours, newSquaredPoints, RobustEstimationAlgorithm.Ransac);
+                homography = CvInvoke.FindHomography(squaredContours, newSquaredPoints, RobustEstimationAlgorithm.Ransac);
 
                 // create a new vector to hold the transformed points
-                Mat transformedImage = new Mat();
+                transformedImage = new Mat();
 
                 // warp the image using the homography matrix
                 CvInvoke.WarpPerspective(image, transformedImage, homography, new Size(100, 100));
                 //CvInvoke.Imshow("bla" + i, transformedImage);
-                Mat grayTransImage = new Mat();
+                grayTransImage = new Mat();
                 // make it gray
                 CvInvoke.CvtColor(transformedImage, grayTransImage, ColorConversion.Bgr2Gray);
 
-                Mat biTransImage = new Mat();
+                biTransImage = new Mat();
                 // make binary
                 CvInvoke.Threshold(grayTransImage, biTransImage, 128, 255, ThresholdType.Otsu);
                 // show ALL binary transformed image
                 //CvInvoke.Imshow("Binary Transformed Image" + i, biTransImage);
 
-                int numRows = 6;
-                int numCols = 6;
-                int cellSize = 100 / 6;
+                numRows = 6;
+                numCols = 6;
+                cellSize = 100 / 6;
 
                 // Calculate the center of each cell and get the pixel value of each cell (black or white)
                 byte[,] pixelValues = new byte[numRows, numCols];
@@ -669,8 +693,8 @@ namespace ARExercise
                 CvInvoke.Rodrigues(rotationVector, rotationMatrix);
 
                 // New matrix from our new rotaion matrix's data and translation data
-                float[,] rValues = rotationMatrix.Data;
-                float[,] tValues = translationVector.Data;
+                rValues = rotationMatrix.Data;
+                tValues = translationVector.Data;
 
                 rtMatrix = new Matrix<float>(new float[,]
                 {
@@ -1275,27 +1299,27 @@ namespace ARExercise
             for (int i = 0; i < squareContours.Size; i++)
             {
                 // input
-                VectorOfPoint squaredContours = squareContours[i];
+                squaredContours = squareContours[i];
                 // output
-                VectorOfPointF newSquaredPoints = new VectorOfPointF();
+                newSquaredPoints = new VectorOfPointF();
 
                 // new points for each contour
                 newSquaredPoints.Push(new PointF[] { new PointF(0, 0), new PointF(100, 0), new PointF(100, 100), new PointF(0, 100) });
 
                 // transform the squared contours using FindHomography
-                Mat homography = CvInvoke.FindHomography(squaredContours, newSquaredPoints, RobustEstimationAlgorithm.Ransac);
+                homography = CvInvoke.FindHomography(squaredContours, newSquaredPoints, RobustEstimationAlgorithm.Ransac);
 
                 // create a new vector to hold the transformed points
-                Mat transformedImage = new Mat();
+                transformedImage = new Mat();
 
                 // warp the image using the homography matrix
                 CvInvoke.WarpPerspective(video, transformedImage, homography, new Size(100, 100));
 
-                Mat grayTransImage = new Mat();
+                grayTransImage = new Mat();
                 // make it gray
                 CvInvoke.CvtColor(transformedImage, grayTransImage, ColorConversion.Bgr2Gray);
 
-                Mat binaryTransformedImage = new Mat();
+                binaryTransformedImage = new Mat();
                 // make binary
                 CvInvoke.Threshold(grayTransImage, binaryTransformedImage, 128, 255, ThresholdType.Otsu);
 
@@ -1304,7 +1328,7 @@ namespace ARExercise
                 int cellSize = 100 / 6;
 
                 // Calculate the center of each cell and get the pixel value of each cell (black or white)
-                byte[,] pixelValues = new byte[numRows, numCols];
+                pixelValues = new byte[numRows, numCols];
                 for (int k = 0; k < numRows; k++)
                 {
                     for (int l = 0; l < numCols; l++)
@@ -1321,7 +1345,7 @@ namespace ARExercise
                 ComparePixelMatrixTomarkers();
 
                 // Convert VectorOfPointF points to MCvPoint3D32f
-                MCvPoint3D32f[] mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
+                mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
                 for (int n = 0; n < newSquaredPoints.Size; n++)
                 {
                     PointF point = newSquaredPoints[n];
@@ -1329,8 +1353,8 @@ namespace ARExercise
                 }
 
                 // Define the image points
-                Point[] points = squareContours[i].ToArray();
-                PointF[] imagePoints = points.Select(p => new PointF(p.X, p.Y)).ToArray();
+                points = squareContours[i].ToArray();
+                imagePoints = points.Select(p => new PointF(p.X, p.Y)).ToArray();
 
                 // Estimate the pose using SolvePnP
                 CvInvoke.SolvePnP(mcPoints, imagePoints, intrinsic, distortionCoeff, rotationVector, translationVector);
@@ -1339,8 +1363,8 @@ namespace ARExercise
                 CvInvoke.Rodrigues(rotationVector, rotationMatrix);
 
                 // New matrix from our new rotaion matrix's data and translation data
-                float[,] rValues = rotationMatrix.Data;
-                float[,] tValues = translationVector.Data;
+                rValues = rotationMatrix.Data;
+                tValues = translationVector.Data;
 
                 rtMatrix = new Matrix<float>(new float[,]
                 {
