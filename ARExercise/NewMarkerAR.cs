@@ -684,7 +684,7 @@ namespace ARExercise
                 //GetMarkers();
 
                 // Convert VectorOfPointF points to MCvPoint3D32f
-                MCvPoint3D32f[] mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
+                mcPoints = new MCvPoint3D32f[newSquaredPoints.Size];
                 for (int n = 0; n < newSquaredPoints.Size; n++)
                 {
                     PointF point = newSquaredPoints[n];
@@ -692,8 +692,8 @@ namespace ARExercise
                 }
 
                 // Define the image points
-                Point[] points = squareContours[i].ToArray();
-                PointF[] imagePoints = points.Select(p => new PointF(p.X, p.Y)).ToArray();
+                points = squareContours[i].ToArray();
+                imagePoints = points.Select(p => new PointF(p.X, p.Y)).ToArray();
 
                 // Estimate the pose using SolvePnP
                 CvInvoke.SolvePnP(mcPoints, imagePoints, intrinsic, distortionCoeff, rotationVector, translationVector);
@@ -1325,9 +1325,9 @@ namespace ARExercise
                 // make binary
                 CvInvoke.Threshold(grayTransImage, binaryTransformedImage, 128, 255, ThresholdType.Otsu);
 
-                int numRows = 6;
-                int numCols = 6;
-                int cellSize = 100 / 6;
+                numRows = 6;
+                numCols = 6;
+                cellSize = 100 / 6;
 
                 // Calculate the center of each cell and get the pixel value of each cell (black or white)
                 pixelValues = new byte[numRows, numCols];
