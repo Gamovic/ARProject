@@ -29,6 +29,7 @@ namespace ARExercise
         Matrix<float> rotationMatrix;
 
         Matrix<float> rtMatrix;
+        Matrix<float> rtMatrix2;
 
         Matrix<byte> pixelMatrix;
 
@@ -107,14 +108,14 @@ namespace ARExercise
 
             contours = new VectorOfVectorOfPoint();
 
-            attackValue1 = 2;
-            attackValue2 = 3;
-            attackValue3 = 5;
-            attackValue4 = 2;
-            attackValue5 = 3;
-            attackValue6 = 8;
-            attackValue7 = 8;
-            attackValue8 = 5;
+            attackValue1 = 1/*2*/;
+            attackValue2 = 2/*3*/;
+            attackValue3 = 3/*5*/;
+            attackValue4 = 4/*2*/;
+            attackValue5 = 5/*3*/;
+            attackValue6 = 6/*8*/;
+            attackValue7 = 7/*8*/;
+            attackValue8 = 8/*5*/;
 
             totalAttackValue = 0;
             totalAttackValue2 = 0;
@@ -1140,100 +1141,21 @@ namespace ARExercise
                 // Convert rotation vector to rotation matrix
                 CvInvoke.Rodrigues(rotationVector, rotationMatrix);
 
-                // New matrix from our new rotaion matrix's data and translation data
-                float[,] rValues = rotationMatrix.Data;
-                float[,] tValues = translationVector.Data;
-
-                Matrix<float> rtMatrix = new Matrix<float>(new float[,]
-                {
-                        { rValues[0, 0], rValues[0, 1], rValues[0, 2], tValues[0, 0] },
-                        { rValues[1, 0], rValues[1, 1], rValues[1, 2], tValues[1, 0] },
-                        { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
-                });
-
-                // Draw
-                #region Draw geometrical Shapes
-
-                //Draw();
-
-                if (marker1Equal)
-                {
-                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
-
-                    if (!attackValues.Contains(attackValue1))
-                        attackValues.Add(attackValue1);
-                }
-
-                if (marker2Equal)
-                {
-                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue2.ToString(), blueColor, yellowColor, greenColor);
-
-                    if (!attackValues.Contains(attackValue2))
-                        attackValues.Add(attackValue2);
-                }
-
-                if (marker3Equal)
-                {
-                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
-
-                    if (!attackValues.Contains(attackValue3))
-                        attackValues.Add(attackValue3);
-                }
-
-                if (marker4Equal)
-                {
-                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue4.ToString(), greenColor, redColor, blueColor);
-
-                    if (!attackValues.Contains(attackValue4))
-                        attackValues.Add(attackValue4);
-                }
-
-                if (marker5Equal)
-                {
-                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue5.ToString(), blueColor, yellowColor, greenColor);
-
-                    if (!attackValues.Contains(attackValue5))
-                        attackValues.Add(attackValue5);
-                }
-
-                if (marker6Equal)
-                {
-                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue6.ToString(), redColor, greenColor, yellowColor);
-
-                    if (!attackValues.Contains(attackValue6))
-                        attackValues.Add(attackValue6);
-                }
-
-                if (marker7Equal)
-                {
-                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue7.ToString(), redColor, greenColor, yellowColor);
-
-                    if (!attackValues.Contains(attackValue7))
-                        attackValues.Add(attackValue7);
-                }
-
-                if (marker8Equal)
-                {
-                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
-
-                    if (!attackValues.Contains(attackValue8))
-                        attackValues.Add(attackValue8);
-                }
-                #endregion
+                Draw();
             }
 
             // Calculates player 1's total score
-            if (attackValues.Count > 0 && attackValues.Count < 3)
+            if (attackValues.Count > 0 && attackValues.Count < 5)
             {
                 totalAttackValue = attackValues.Sum();
             }
             // Calculates player 2's total score
             // Also calculate player 1's score, if there're more than 3 markers added to the list (/in frame),
             // to make sure player 1's score is shown on screen.
-            else if (attackValues.Count > 3 && attackValues.Count < 5)
+            else if (attackValues.Count > 5 && attackValues.Count < 9)
             {
-                totalAttackValue = attackValues[0] + attackValues[1];
-                totalAttackValue2 = attackValues[2] + attackValues[3];
+                totalAttackValue = attackValues[0] + attackValues[1] + attackValues[2] + attackValues[3];
+                totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
             }
 
             UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString(), totalAttackValue2.ToString());
@@ -1244,19 +1166,32 @@ namespace ARExercise
         /// <summary>
         /// Draw geometrical shapes and add attack values to the attackValues list.
         /// </summary>
-        private void Draw()
+        public void Draw()
         {
+            // New matrix from our new rotaion matrix's data and translation data
+            float[,] rValues = rotationMatrix.Data;
+            float[,] tValues = translationVector.Data;
+
+            rtMatrix2 = new Matrix<float>(new float[,]
+            {
+                        { rValues[0, 0], rValues[0, 1], rValues[0, 2], tValues[0, 0] },
+                        { rValues[1, 0], rValues[1, 1], rValues[1, 2], tValues[1, 0] },
+                        { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
+            });
+
             if (marker1Equal)
             {
-                UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue1.ToString(), greenColor, redColor, blueColor);
+                UtilityAR.DrawTriangle(video, intrinsic * rtMatrix2, attackValue1.ToString(), greenColor, redColor, blueColor);
 
                 if (!attackValues.Contains(attackValue1))
+                {
                     attackValues.Add(attackValue1);
+                }
             }
 
             if (marker2Equal)
             {
-                UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue2.ToString(), blueColor, yellowColor, greenColor);
+                UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix2, attackValue2.ToString(), blueColor, yellowColor, greenColor);
 
                 if (!attackValues.Contains(attackValue2))
                     attackValues.Add(attackValue2);
@@ -1264,7 +1199,7 @@ namespace ARExercise
 
             if (marker3Equal)
             {
-                UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue3.ToString(), yellowColor, redColor, blueColor);
 
                 if (!attackValues.Contains(attackValue3))
                     attackValues.Add(attackValue3);
@@ -1272,7 +1207,7 @@ namespace ARExercise
 
             if (marker4Equal)
             {
-                UtilityAR.DrawTriangle(video, intrinsic * rtMatrix, attackValue4.ToString(), greenColor, redColor, blueColor);
+                UtilityAR.DrawTriangle(video, intrinsic * rtMatrix2, attackValue4.ToString(), greenColor, redColor, blueColor);
 
                 if (!attackValues.Contains(attackValue4))
                     attackValues.Add(attackValue4);
@@ -1280,7 +1215,7 @@ namespace ARExercise
 
             if (marker5Equal)
             {
-                UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue5.ToString(), blueColor, yellowColor, greenColor);
+                UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix2, attackValue5.ToString(), blueColor, yellowColor, greenColor);
 
                 if (!attackValues.Contains(attackValue5))
                     attackValues.Add(attackValue5);
@@ -1288,7 +1223,7 @@ namespace ARExercise
 
             if (marker6Equal)
             {
-                UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue6.ToString(), redColor, greenColor, yellowColor);
+                UtilityAR.DrawHexagon(video, intrinsic * rtMatrix2, attackValue6.ToString(), redColor, greenColor, yellowColor);
 
                 if (!attackValues.Contains(attackValue6))
                     attackValues.Add(attackValue6);
@@ -1296,7 +1231,7 @@ namespace ARExercise
 
             if (marker7Equal)
             {
-                UtilityAR.DrawHexagon(video, intrinsic * rtMatrix, attackValue7.ToString(), redColor, greenColor, yellowColor);
+                UtilityAR.DrawHexagon(video, intrinsic * rtMatrix2, attackValue7.ToString(), redColor, greenColor, yellowColor);
 
                 if (!attackValues.Contains(attackValue7))
                     attackValues.Add(attackValue7);
@@ -1304,7 +1239,7 @@ namespace ARExercise
 
             if (marker8Equal)
             {
-                UtilityAR.DrawPentagon(video, intrinsic * rtMatrix, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue3.ToString(), yellowColor, redColor, blueColor);
 
                 if (!attackValues.Contains(attackValue8))
                     attackValues.Add(attackValue8);
