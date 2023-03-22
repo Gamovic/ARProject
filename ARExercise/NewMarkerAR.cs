@@ -1145,14 +1145,14 @@ namespace ARExercise
             }
 
             // Calculates player 1's total score
-            if (attackValues.Count > 0 && attackValues.Count < 5)
+            if (attackValues.Count > 0 && attackValues.Count == 4)
             {
                 totalAttackValue = attackValues.Sum();
             }
             // Calculates player 2's total score
             // Also calculate player 1's score, if there're more than 3 markers added to the list (/in frame),
             // to make sure player 1's score is shown on screen.
-            else if (attackValues.Count > 5 && attackValues.Count < 9)
+            else if (attackValues.Count > 4 && attackValues.Count == 8)
             {
                 totalAttackValue = attackValues[0] + attackValues[1] + attackValues[2] + attackValues[3];
                 totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
@@ -1239,7 +1239,7 @@ namespace ARExercise
 
             if (marker8Equal)
             {
-                UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue3.ToString(), yellowColor, redColor, blueColor);
+                UtilityAR.DrawPyramid(video, intrinsic * rtMatrix2, attackValue8.ToString(), yellowColor, redColor);
 
                 if (!attackValues.Contains(attackValue8))
                     attackValues.Add(attackValue8);
