@@ -10,7 +10,7 @@ namespace ARExercise
             //UtilityAR.CaptureLoop(new Size(7, 4), 1);
             //UtilityAR.CalibrateCamera(new Size(7, 4), true);
 
-            NewMarkerAR newMarkerAR = new NewMarkerAR();
+            MarkerAR newMarkerAR = new MarkerAR();
             newMarkerAR.Run();
         }
     }

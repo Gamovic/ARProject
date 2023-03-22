@@ -612,7 +612,7 @@ namespace ARExercise
             Matrix<float>[] worldPoints2 = new[]
             {
                 new Matrix<float>(new float[] { 0, 0, 0, 1 }), new Matrix<float>(new float[] { scale, 0, 0, 1 }),
-                new Matrix<float>(new float[] { 80, -220, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 })
+                new Matrix<float>(new float[] { 80, -190, 0, 1 }), new Matrix<float>(new float[] { 0, scale, 0, 1 })
             };
 
             Point[] screenPoints = worldPoints

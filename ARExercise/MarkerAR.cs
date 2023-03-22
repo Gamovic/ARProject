@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Emgu.CV;
+﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
@@ -48,7 +43,7 @@ namespace ARExercise
         bool marker8Equal, marker8Rot90Equal, marker8Rot180Equal, marker8Rot270Equal;
         #endregion
 
-        int attackValue1, attackValue2, attackValue3, attackValue4, 
+        int attackValue1, attackValue2, attackValue3, attackValue4,
             attackValue5, attackValue6, attackValue7, attackValue8;
 
         int totalAttackValue;
@@ -128,6 +123,10 @@ namespace ARExercise
             attackValue7 = 8;
             attackValue8 = 5;
 
+            totalAttackValue = 0;
+            // List to store the attack values in
+            attackValues = new List<int>();
+
             greenColor = new MCvScalar(0, 255, 0);
             blueColor = new MCvScalar(255, 0, 0);
             yellowColor = new MCvScalar(0, 255, 255);
@@ -184,7 +183,7 @@ namespace ARExercise
                 VectorOfPointF newSquaredPoints = new VectorOfPointF();
 
                 // new points for each contour
-                newSquaredPoints.Push(new PointF[] { new PointF(0, 0), new PointF(100, 0), 
+                newSquaredPoints.Push(new PointF[] { new PointF(0, 0), new PointF(100, 0),
                     new PointF(100, 100), new PointF(0, 100) });
 
                 // transform the squared contours using FindHomography
@@ -1261,7 +1260,7 @@ namespace ARExercise
                 ///
                 /// Marker 1
                 /// 
-               
+
                 // compare pixelValues with Marker2
                 marker1Equal = pixelMatrix.Equals(marker1);
                 marker1Rot90Equal = pixelMatrix.Equals(marker1Rot90);
@@ -1271,7 +1270,7 @@ namespace ARExercise
                 ///
                 /// Marker 2
                 /// 
-                
+
                 // compare pixelValues with Marker1
                 marker2Equal = pixelMatrix.Equals(marker2);
                 // compare pixelValues with Marker1Rot90
@@ -1284,7 +1283,7 @@ namespace ARExercise
                 ///
                 /// Marker 3 normal
                 /// 
-                
+
                 // compare pixelValues with Marker3
                 marker3Equal = pixelMatrix.Equals(marker3);
                 // compare pixelValues with Marker3Rot90
@@ -1297,7 +1296,7 @@ namespace ARExercise
                 ///
                 /// Marker 4
                 ///
-               
+
                 // compare pixelValues with Marker3
                 marker4Equal = pixelMatrix.Equals(marker4);
                 // compare pixelValues with Marker3Rot90
@@ -1310,7 +1309,7 @@ namespace ARExercise
                 ///
                 /// Marker 5
                 ///
-                
+
                 // compare pixelValues with Marker 5
                 marker5Equal = pixelMatrix.Equals(marker5);
                 // compare pixelValues with Marker2Rot90
@@ -1323,7 +1322,7 @@ namespace ARExercise
                 ///
                 /// Marker 6
                 ///
-               
+
                 // compare pixelValues with Marker 6
                 marker6Equal = pixelMatrix.Equals(marker6);
                 marker6Rot90Equal = pixelMatrix.Equals(marker6Rot90);
@@ -1333,7 +1332,7 @@ namespace ARExercise
                 ///
                 /// Marker 7
                 ///
-               
+
                 // compare pixelValues with Marker 7
                 marker7Equal = pixelMatrix.Equals(marker7);
                 marker7Rot90Equal = pixelMatrix.Equals(marker7Rot90);
@@ -1343,7 +1342,7 @@ namespace ARExercise
                 ///
                 /// Marker 8
                 ///
-                
+
                 // compare pixelValues with Marker 8
                 marker8Equal = pixelMatrix.Equals(marker8);
                 marker8Rot90Equal = pixelMatrix.Equals(marker8Rot90);
@@ -1382,9 +1381,7 @@ namespace ARExercise
                 });
 
 
-                totalAttackValue = 0;
-                // List to store the attack values in
-                attackValues = new List<int>();
+
 
                 ///
                 /// Draw
@@ -1487,7 +1484,7 @@ namespace ARExercise
                 }
                 #endregion
 
-                
+
             }
             totalAttackValue = attackValues.Sum();
 
@@ -1497,8 +1494,8 @@ namespace ARExercise
             //int totalAttackVal = attackValues.Sum();
 
             //UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix, attackValue, colour);
-            //UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString());
-            Console.WriteLine(totalAttackValue);
+            UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString(), new string("0"));
+            //Console.WriteLine(totalAttackValue);
 
             CvInvoke.Imshow("Video", video);
         }
