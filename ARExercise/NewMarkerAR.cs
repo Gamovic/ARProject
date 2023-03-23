@@ -53,11 +53,20 @@ namespace ARExercise
 
         List<int> attackValues;
 
+        List<int> player1List;
+        List<int> player2List;
+
+        bool player1ListSet = false;
+        bool player2ListSet = false;
+
         MCvPoint3D32f[] mcPoints;
 
         //MCvScalar colour;
         MCvScalar greenColor, blueColor, yellowColor, redColor, orangeColor, purpleColor, pinkColor, 
             cyanColor, maroonColor, peachColor, turquoiseColor, darkgreenColor;
+
+        MCvScalar player1Color;
+        MCvScalar player2Color;
 
         #region Marker definitions
         Matrix<byte> marker1, marker1Rot90, marker1Rot180, marker1Rot270;
@@ -122,6 +131,11 @@ namespace ARExercise
             totalAttackValue2 = 0;
             // List to store the attack values in
             attackValues = new List<int>();
+
+            player1List = new List<int>();
+            player2List = new List<int>();
+
+
 
             numRows = 6;
             numCols = 6;
@@ -673,6 +687,9 @@ namespace ARExercise
             CvInvoke.Imshow("draw cube", image);
 
             GetMarkers();
+
+            player1Color = blueColor;
+            player2Color = redColor;
         }
 
         /// <summary>
@@ -1151,22 +1168,38 @@ namespace ARExercise
                 // Convert rotation vector to rotation matrix
                 CvInvoke.Rodrigues(rotationVector, rotationMatrix);
 
-                Draw();
+         
+
+                if (player1ListSet == true && player1ListSet == true)
+                {
+                    Draw(player1Color, player1List);
+                    Draw(player2Color, player2List);
+                }
+
+                else
+                {
+                    Draw();
+                }
+
+
+
             }
 
-            // Calculates player 1's total score
-            if (attackValues.Count > 0 && attackValues.Count == 4)
-            {
-                totalAttackValue = attackValues.Sum();
-            }
-            // Calculates player 2's total score
-            // Also calculate player 1's score, if there're more than 3 markers added to the list (/in frame),
-            // to make sure player 1's score is shown on screen.
-            else if (attackValues.Count > 4 && attackValues.Count == 8)
-            {
-                totalAttackValue = attackValues[0] + attackValues[1] + attackValues[2] + attackValues[3];
-                totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
-            }
+            SetPlayerMarkers();
+
+            ////// Calculates player 1's total score
+            ////if (attackValues.Count > 0 && attackValues.Count == 4)
+            ////{
+            ////    totalAttackValue = attackValues.Sum();
+            ////}
+            ////// Calculates player 2's total score
+            ////// Also calculate player 1's score, if there're more than 3 markers added to the list (/in frame),
+            ////// to make sure player 1's score is shown on screen.
+            ////else if (attackValues.Count > 4 && attackValues.Count == 8)
+            ////{
+            ////    totalAttackValue = attackValues[0] + attackValues[1] + attackValues[2] + attackValues[3];
+            ////    totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
+            ////}
 
             UtilityAR.DrawText(video, totalAttackValue.ToString(), totalAttackValue2.ToString());
 
@@ -1176,7 +1209,7 @@ namespace ARExercise
         /// <summary>
         /// Draw geometrical shapes and add attack values to the attackValues list.
         /// </summary>
-        public void Draw()
+        private void Draw()
         {
             // New matrix from our new rotaion matrix's data and translation data
             float[,] rValues = rotationMatrix.Data;
@@ -1254,6 +1287,164 @@ namespace ARExercise
                 if (!attackValues.Contains(attackValue8))
                     attackValues.Add(attackValue8);
             }
+        }
+
+        /// <summary>
+        /// Draw geometrical shapes and add attack values to the attackValues list.
+        /// </summary>
+        private void Draw(MCvScalar playerColor, List<int> playerList)
+        {
+            // New matrix from our new rotaion matrix's data and translation data
+            float[,] rValues = rotationMatrix.Data;
+            float[,] tValues = translationVector.Data;
+
+            rtMatrix2 = new Matrix<float>(new float[,]
+            {
+                        { rValues[0, 0], rValues[0, 1], rValues[0, 2], tValues[0, 0] },
+                        { rValues[1, 0], rValues[1, 1], rValues[1, 2], tValues[1, 0] },
+                        { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
+            });
+
+
+            if (playerList == player1List)
+            {
+                if (marker1Equal && playerList.Contains(attackValue1))
+                {
+                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix2, attackValue1.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue1))
+                    {
+                        attackValues.Add(attackValue1);
+                    }
+                }
+
+                if (marker2Equal && playerList.Contains(attackValue2))
+                {
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix2, attackValue2.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue2))
+                        attackValues.Add(attackValue2);
+                }
+
+                if (marker3Equal && playerList.Contains(attackValue3))
+                {
+                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue3.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue3))
+                        attackValues.Add(attackValue3);
+                }
+
+                if (marker4Equal && playerList.Contains(attackValue4))
+                {
+                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix2, attackValue4.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue4))
+                        attackValues.Add(attackValue4);
+                }
+
+                if (marker5Equal && playerList.Contains(attackValue5))
+                {
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix2, attackValue5.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue5))
+                        attackValues.Add(attackValue5);
+                }
+
+                if (marker6Equal && playerList.Contains(attackValue6))
+                {
+                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix2, attackValue6.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue6))
+                        attackValues.Add(attackValue6);
+                }
+
+                if (marker7Equal && playerList.Contains(attackValue7))
+                {
+                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix2, attackValue7.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue7))
+                        attackValues.Add(attackValue7);
+                }
+
+                if (marker8Equal && playerList.Contains(attackValue8))
+                {
+                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue8.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue8))
+                        attackValues.Add(attackValue8);
+                }
+            }
+
+
+            else if (playerList == player2List)
+            {
+                if (marker1Equal && playerList.Contains(attackValue1))
+                {
+                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix2, attackValue1.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue1))
+                    {
+                        attackValues.Add(attackValue1);
+                    }
+                }
+
+                if (marker2Equal && playerList.Contains(attackValue2))
+                {
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix2, attackValue2.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue2))
+                        attackValues.Add(attackValue2);
+                }
+
+                if (marker3Equal && playerList.Contains(attackValue3))
+                {
+                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue3.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue3))
+                        attackValues.Add(attackValue3);
+                }
+
+                if (marker4Equal && playerList.Contains(attackValue4))
+                {
+                    UtilityAR.DrawTriangle(video, intrinsic * rtMatrix2, attackValue4.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue4))
+                        attackValues.Add(attackValue4);
+                }
+
+                if (marker5Equal && playerList.Contains(attackValue5))
+                {
+                    UtilityAR.DrawCustomCube(video, intrinsic * rtMatrix2, attackValue5.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue5))
+                        attackValues.Add(attackValue5);
+                }
+
+                if (marker6Equal && playerList.Contains(attackValue6))
+                {
+                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix2, attackValue6.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue6))
+                        attackValues.Add(attackValue6);
+                }
+
+                if (marker7Equal && playerList.Contains(attackValue7))
+                {
+                    UtilityAR.DrawHexagon(video, intrinsic * rtMatrix2, attackValue7.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue7))
+                        attackValues.Add(attackValue7);
+                }
+
+                if (marker8Equal && playerList.Contains(attackValue8))
+                {
+                    UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue8.ToString(), playerColor, playerColor, playerColor);
+
+                    if (!attackValues.Contains(attackValue8))
+                        attackValues.Add(attackValue8);
+                }
+            }
+
         }
 
         /// <summary>
@@ -1404,6 +1595,54 @@ namespace ARExercise
             {
                 Console.WriteLine("Marker8Rot270 and pMatrix are equal");
                 UtilityAR.DrawCustomCube(image, intrinsic * rtMatrix, attackValue2.ToString(), yellowColor, blueColor, redColor);
+            }
+        }
+
+        private void SetPlayerMarkers()
+        {
+            // Calculates player 1's total score
+            if (attackValues.Count > 0 && attackValues.Count == 4)
+            {
+                totalAttackValue = attackValues.Sum();
+            }
+            // Calculates player 2's total score
+            // Also calculate player 1's score, if there're more than 3 markers added to the list (/in frame),
+            // to make sure player 1's score is shown on screen.
+            else if (attackValues.Count > 4 && attackValues.Count == 8)
+            {
+                totalAttackValue = attackValues[0] + attackValues[1] + attackValues[2] + attackValues[3];
+
+               
+                if (player1ListSet == false)
+                {
+                    int[] tmpList = new int[4];
+
+                    tmpList[0] = attackValues[0];
+                    tmpList[1] = attackValues[1];
+                    tmpList[2] = attackValues[2];
+                    tmpList[3] = attackValues[3];
+                    player1List.AddRange(tmpList);
+
+                    player1ListSet = true;
+
+                }
+
+
+                totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
+
+                if (player2ListSet == false)
+                {
+                    int[] tmpList = new int[4];
+
+                    tmpList[0] = attackValues[4];
+                    tmpList[1] = attackValues[5];
+                    tmpList[2] = attackValues[6];
+                    tmpList[3] = attackValues[7];
+                    player2List.AddRange(tmpList);
+
+                    player2ListSet = true;
+
+                }
             }
         }
     }
