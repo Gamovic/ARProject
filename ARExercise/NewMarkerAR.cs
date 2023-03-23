@@ -1239,7 +1239,7 @@ namespace ARExercise
 
             if (marker8Equal)
             {
-                UtilityAR.DrawPyramid(video, intrinsic * rtMatrix2, attackValue8.ToString(), yellowColor, redColor);
+                UtilityAR.DrawPentagon(video, intrinsic * rtMatrix2, attackValue8.ToString(), yellowColor, redColor, blueColor);
 
                 if (!attackValues.Contains(attackValue8))
                     attackValues.Add(attackValue8);
