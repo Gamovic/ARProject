@@ -1158,7 +1158,7 @@ namespace ARExercise
                 totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
             }
 
-            UtilityAR.DrawText(video, intrinsic * rtMatrix, totalAttackValue.ToString(), totalAttackValue2.ToString());
+            UtilityAR.DrawText(video, totalAttackValue.ToString(), totalAttackValue2.ToString());
 
             CvInvoke.Imshow("Video", video);
         }
