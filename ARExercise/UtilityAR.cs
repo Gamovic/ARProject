@@ -238,8 +238,9 @@ namespace ARExercise
                 CvInvoke.Line(img, point1, point2, color3, 3);
             }
 
-            // Add text on top of floorContour
+            // Add text and text's shadow on top of floorContour
             CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2) + 2, (int)((screenPoints[0].Y + screenPoints[2].Y) / 2) + 2), FontFace.HersheySimplex, 2, new MCvScalar(255, 255, 255), 3);
         }
 
         /// <summary>
@@ -296,8 +297,9 @@ namespace ARExercise
                 CvInvoke.Line(img, point1, point2, color3, 3);
             }
 
-            // Add text on top of floorContour
-            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            // Add text and text's shadow on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // text's shadow
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2) - 2, (int)((screenPoints[0].Y + screenPoints[2].Y) / 2) - 2), FontFace.HersheySimplex, 2, new MCvScalar(255, 255, 255), 3); // text
         }
 
         /// <summary>
@@ -405,8 +407,9 @@ namespace ARExercise
                 CvInvoke.Line(img, p1, p2, color3, 3);
             }
 
-            // Add text on top of floorContour
-            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            // Add text and text's shadow on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // text's shadow
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2) - 2, (int)((screenPoints[0].Y + screenPoints[2].Y) / 2) - 2), FontFace.HersheySimplex, 2, new MCvScalar(255, 255, 255), 3); // text
         }
 
         /// <summary>
@@ -473,8 +476,9 @@ namespace ARExercise
                 CvInvoke.Line(img, point1, point2, color3, 3);
             }
 
-            // Add text on top of floorContour
-            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            // Add text and text's shadow on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // text's shadow
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2) - 2, (int)((screenPoints[0].Y + screenPoints[2].Y) / 2) - 2), FontFace.HersheySimplex, 2, new MCvScalar(255, 255, 255), 3); // text
         }
 
         /// <summary>
@@ -546,8 +550,9 @@ namespace ARExercise
                 CvInvoke.Line(img, point1, point2, color3, 3);
             }
 
-            // Add text on top of floorContour
-            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            // Add text and text's shadow on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // text's shadow
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2) - 2, (int)((screenPoints[0].Y + screenPoints[2].Y) / 2) - 2), FontFace.HersheySimplex, 2, new MCvScalar(255, 255, 255), 3); // text
         }
 
         /// <summary>
@@ -591,8 +596,9 @@ namespace ARExercise
                 CvInvoke.Line(img, point1, point2, color, 3);
             }
 
-            // Add text on top of floorContour
-            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3);
+            // Add text and text's shadow on top of floorContour
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2), (int)((screenPoints[0].Y + screenPoints[2].Y) / 2)), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // text's shadow
+            CvInvoke.PutText(img, attackValue, new Point((int)((screenPoints[0].X + screenPoints[2].X) / 2) - 2, (int)((screenPoints[0].Y + screenPoints[2].Y) / 2) - 2), FontFace.HersheySimplex, 2, new MCvScalar(255, 255, 255), 3); // text
         }
 
         /// <summary>
@@ -607,8 +613,10 @@ namespace ARExercise
             int yOffset = 160;
 
             // Add 2 texts on top of floorContour. One for player 1, and one for player 2.
-            CvInvoke.PutText(img, playerscore, new Point((int)(frameWidth / 2) - xOffset, (int)(frameHeight / 2) - yOffset), FontFace.HersheySimplex, 2, new MCvScalar(255, 0, 0), 3);
-            CvInvoke.PutText(img, playerscore2, new Point((int)(frameWidth / 2) + 320, (int)(frameHeight / 2) - yOffset), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 255), 3);
+            CvInvoke.PutText(img, playerscore, new Point((int)(frameWidth / 2) - 198, (int)(frameHeight / 2) - 158), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // player 1 text's shadow
+            CvInvoke.PutText(img, playerscore, new Point((int)(frameWidth / 2) - xOffset, (int)(frameHeight / 2) - yOffset), FontFace.HersheySimplex, 2, new MCvScalar(255, 0, 0), 3); // player 1 text
+            CvInvoke.PutText(img, playerscore2, new Point((int)(frameWidth / 2) + 322, (int)(frameHeight / 2) - 158), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 0), 3); // player 2 text's shadow
+            CvInvoke.PutText(img, playerscore2, new Point((int)(frameWidth / 2) + 320, (int)(frameHeight / 2) - yOffset), FontFace.HersheySimplex, 2, new MCvScalar(0, 0, 255), 3); // player 2 text
         }
 
         /// <summary>
