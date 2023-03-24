@@ -1071,8 +1071,6 @@ namespace ARExercise
                || pixelMatrix.Equals(marker8Rot180) || pixelMatrix.Equals(marker8Rot270);
         }
 
-
-
         public override void OnFrame()
         {
             video = new Mat();
@@ -1286,7 +1284,6 @@ namespace ARExercise
                         { rValues[1, 0], rValues[1, 1], rValues[1, 2], tValues[1, 0] },
                         { rValues[2, 0], rValues[2, 1], rValues[2, 2], tValues[2, 0] }
             });
-
 
             if (playerList == player1List)
             {
@@ -1581,6 +1578,9 @@ namespace ARExercise
             }
         }
 
+        /// <summary>
+        /// Set player markers
+        /// </summary>
         private void SetPlayerMarkers()
         {
             // Calculates player 1's total score
@@ -1595,11 +1595,11 @@ namespace ARExercise
             {
                 totalAttackValue = attackValues[0] + attackValues[1] + attackValues[2] + attackValues[3];
 
-
                 if (player1ListSet == false)
                 {
                     int[] tmpList = new int[4];
 
+                    // Add the first 4 attack values to player list 1 from the list of attack values
                     tmpList[0] = attackValues[0];
                     tmpList[1] = attackValues[1];
                     tmpList[2] = attackValues[2];
@@ -1607,9 +1607,7 @@ namespace ARExercise
                     player1List.AddRange(tmpList);
 
                     player1ListSet = true;
-
                 }
-
 
                 totalAttackValue2 = attackValues[4] + attackValues[5] + attackValues[6] + attackValues[7];
 
@@ -1617,6 +1615,7 @@ namespace ARExercise
                 {
                     int[] tmpList = new int[4];
 
+                    // Add the last 4 attack values to player list 2 from the list of attack values
                     tmpList[0] = attackValues[4];
                     tmpList[1] = attackValues[5];
                     tmpList[2] = attackValues[6];
@@ -1624,7 +1623,6 @@ namespace ARExercise
                     player2List.AddRange(tmpList);
 
                     player2ListSet = true;
-
                 }
             }
         }
